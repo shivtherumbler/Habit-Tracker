@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - Habits</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="my-5">
+            <h1>Your Habits</h1>
+            <a href="/habits/add" class="btn btn-success">Add New Habit</a>
+        </header>
+
+        <main>
+            <ul class="list-group">
+                {{#each habits}}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{this.name}}</span>
+                        <div>
+                            <a href="/habits/{{this.id}}/edit" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/habits/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    </li>
+                {{else}}
+                    <li class="list-group-item">No habits found.</li>
+                {{/each}}
+            </ul>
+        </main>
+
+        <footer class="my-5 text-center">
+            <p>&copy; 2025 Habit Tracker. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

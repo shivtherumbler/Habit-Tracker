@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - Add Habit</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="my-5">
+            <h1>Add New Habit</h1>
+        </header>
+
+        <main>
+            <form action="/habits" method="POST">
+                <div class="form-group">
+                    <label for="habitName">Habit Name</label>
+                    <input type="text" class="form-control" id="habitName" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="habitDescription">Description</label>
+                    <textarea class="form-control" id="habitDescription" name="description" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Habit</button>
+            </form>
+        </main>
+
+        <footer class="my-5 text-center">
+            <p>&copy; 2025 Habit Tracker. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
