@@ -1,0 +1,138 @@
+.menu-grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  animation: fadeIn 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+}
+
+.menu-grid-container {
+  background-color: white;
+  border: 4px solid #1a3e6c;
+  border-radius: 15px;
+  padding: 20px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1a3e6c;
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
+  z-index: 6;
+}
+
+.close-button:hover {
+  background-color: #f0f8ff;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.menu-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #1a3e6c;
+  border-radius: 10px;
+  padding: 10px 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.menu-grid-item:hover {
+  transform: scale(1.05);
+  background-color: #f0f8ff;
+}
+
+.menu-icon-placeholder {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #1a3e6c;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.menu-label {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: black;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+  .menu-grid-container {
+    width: 90%;
+    padding: 15px;
+  }
+  
+  .menu-grid {
+    gap: 10px;
+  }
+  
+  .menu-icon-placeholder {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .menu-label {
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .menu-grid-container {
+    width: 95%;
+    padding: 10px;
+  }
+  
+  .menu-grid {
+    gap: 8px;
+  }
+  
+  .menu-icon-placeholder {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .menu-label {
+    font-size: 0.7rem;
+  }
+} 

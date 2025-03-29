@@ -1,0 +1,211 @@
+.habit-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  animation: fadeIn 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.habit-confirmation-container {
+  background-color: white;
+  border: 4px solid #1a3e6c;
+  border-radius: 15px;
+  padding: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+  max-height: 55vh;
+}
+
+.habit-confirmation-title {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  color: black;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.habit-confirmation-content {
+  margin-top: 0;
+  text-align: center;
+}
+
+.habit-confirmation-heading {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: black;
+}
+
+.selected-fish-container {
+  width: 80px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 8px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.selected-fish-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.habit-details-summary {
+  width: 100%;
+  max-width: 100%;
+  overflow-y: auto;
+  max-height: 300px; /* Adjust as needed */
+  box-sizing: border-box;
+  padding: 15px;
+}
+
+.habit-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1a3e6c;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.habit-detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.habit-detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.habit-detail-label {
+  flex: 0 0 80px;
+  font-weight: bold;
+  color: black;
+  text-align: right;
+  padding-right: 6px;
+  font-size: 0.95rem;
+}
+
+.habit-detail-value {
+  flex: 1;
+  color: black;
+  line-height: 1.2;
+  word-break: break-word;
+  font-size: 0.95rem;
+  max-width: 70%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  margin-top: 8px;
+}
+
+.back-button,
+.confirm-button {
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 6px;
+}
+
+.back-button {
+  background-color: transparent;
+  color: #1a3e6c;
+}
+
+.confirm-button {
+  background-color: #ff9eb9;
+  color: white;
+}
+
+.back-button:hover,
+.confirm-button:hover {
+  transform: scale(1.05);
+}
+
+.close-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1a3e6c;
+  color: #1a3e6c;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
+  z-index: 6;
+}
+
+.close-button:hover {
+  background-color: #f0f8ff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .habit-confirmation-container {
+    width: 95%;
+    padding: 15px;
+    max-height: 55vh;
+  }
+  
+  .habit-confirmation-heading {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  
+  .selected-fish-container {
+    width: 120px;
+    height: 90px;
+    margin-bottom: 15px;
+  }
+  
+  .habit-name {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  .habit-detail-label {
+    flex: 0 0 100px;
+  }
+} 

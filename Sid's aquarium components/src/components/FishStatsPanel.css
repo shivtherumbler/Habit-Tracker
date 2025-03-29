@@ -1,0 +1,286 @@
+.fish-stats-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  animation: fadeIn 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.fish-stats-container {
+  background-color: white;
+  border: 4px solid #1a3e6c;
+  border-radius: 15px;
+  padding: 20px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+}
+
+.fish-stats-title {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  color: black;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.fish-stats-content {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.fish-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 15px;
+}
+
+.fish-image-container {
+  width: 100px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+}
+
+.fish-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1a3e6c;
+}
+
+.habit-details {
+  background-color: #f5f8ff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.detail-row {
+  display: relative;
+  margin-bottom: 10px;
+  position: relative;
+  align-items: left;
+
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  flex: 0 0 100px;
+  font-weight: bold;
+  color: black;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.detail-value {
+  flex: 1;
+  color: black;
+  text-align: left;
+  word-break: break-word;
+  line-height: 1.3;
+  align-self: flex-start;
+  padding-right: 40px; /* Space for edit button */
+}
+
+.edit-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: none;
+  border: none;
+  color: #1a3e6c;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.edit-button:hover {
+  transform: scale(1.05);
+}
+
+.edit-form {
+  padding: 10px;
+}
+
+.form-row {
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-row input,
+.form-row select {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #1a3e6c;
+  border-radius: 5px;
+}
+
+.form-row textarea {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
+  border: 2px solid #1a3e6c;
+  border-radius: 5px;
+  resize: none;
+}
+
+.save-button {
+  background-color: #1a3e6c;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: transform 0.2s ease;
+}
+
+.save-button:hover {
+  transform: scale(1.05);
+}
+
+.heatmap-container {
+  margin-bottom: 20px;
+}
+
+.heatmap-placeholder {
+  width: 100%;
+  height: 100px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.remove-fish-button {
+  background-color: #fe0048;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+  width: 100%;
+  transition: transform 0.2s ease;
+}
+
+.remove-fish-button:hover {
+  transform: scale(1.02);
+}
+
+.back-button {
+  background-color: transparent;
+  color: #1a3e6c;
+  border: none;
+  padding: 8px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.05);
+}
+
+.close-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1a3e6c;
+  color: #1a3e6c;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
+  z-index: 6;
+}
+
+.close-button:hover {
+  background-color: #f0f8ff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .fish-stats-container {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .stats-row {
+    gap: 20px;
+  }
+  
+  .stat-value {
+    font-size: 1.3rem;
+  }
+  
+  .detail-label {
+    flex: 0 0 90px;
+  }
+} 
