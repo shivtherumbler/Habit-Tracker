@@ -1,26 +1,76 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Habit = require("../models/Habit"); // Assuming you have a Habit model
+const { createHabit, getHabits, getHabitById } = require('../models/Habit');
 
-// Route to display all habits
-router.get("/", async (req, res) => {
+// Show all habits
+router.get('/habits', async (req, res) => {
     try {
-        const habits = await Habit.find(); // Fetch habits from MongoDB
-        res.render("habits", { habits }); // Pass habits to the template
+        const habits = await getHabits();
+        res.render('habits', { habits });
     } catch (error) {
-        res.status(500).send("Error fetching habits");
+        console.error('Error fetching habits:', error);
+        res.render('habits', { habits: [] });
     }
 });
 
-// Route to add a new habit
-router.post("/add", async (req, res) => {
-    const { name, frequency } = req.body;
+// Show form to add a new habit
+router.get('/habits/add', (req, res) => {
+    res.render('add-habit');
+});
+
+// Create a new habit
+router.post('/habits', async (req, res) => {
+    const { user, habitName, frequency, notifications, goals, notes } = req.body;
+
+    const newHabit = {
+        user,
+        habitName,
+        frequency,
+        notifications: notifications === 'true',
+        goals,
+        notes,
+        completions: [] // Start with an empty completions array
+    };
+
     try {
-        const newHabit = new Habit({ name, frequency });
-        await newHabit.save(); // Save the habit to MongoDB
-        res.redirect("/habits"); // Redirect to habits page
+        await createHabit(newHabit);
+        res.redirect('/habits');
     } catch (error) {
-        res.status(500).send("Error saving habit");
+        console.error('Error creating habit:', error);
+        res.render('add-habit', { error: 'Error creating habit' });
+    }
+});
+
+// Show form to edit a habit
+router.get('/habits/:id/edit', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const habit = await getHabitById(id);
+        res.render('edit-habit', { habit });
+    } catch (error) {
+        console.error('Error fetching habit for editing:', error);
+        res.redirect('/habits');
+    }
+});
+
+// Update an existing habit
+router.post('/habits/:id', async (req, res) => {
+    const { id } = req.params;
+    const { habitName, frequency, notifications, goals, notes } = req.body;
+
+    try {
+        const updatedHabit = {
+            habitName,
+            frequency,
+            notifications: notifications === 'true',
+            goals,
+            notes
+        };
+        await updateHabit(id, updatedHabit);
+        res.redirect('/habits');
+    } catch (error) {
+        console.error('Error updating habit:', error);
+        res.redirect(`/habits/${id}/edit`);
     }
 });
 
