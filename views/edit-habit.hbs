@@ -1,41 +1,45 @@
+<!-- views/edit-habit.hbs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habit Tracker - Add Habit</title>
+    <title>Edit Habit - Habit Tracker</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header class="my-5">
-            <h1>Add New Habit</h1>
-        </header>
+        <h1>Edit Habit</h1>
+        <form action="/habits/{{habit._id}}" method="POST">
+            <div class="form-group">
+                <label for="name">Habit Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{habit.name}}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" required>{{habit.description}}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="frequency">Frequency</label>
+                <input type="text" class="form-control" id="frequency" name="frequency" value="{{habit.frequency}}" required>
+            </div>
+            <div class="form-group">
+                <label for="notifications">Notifications</label>
+                <input type="text" class="form-control" id="notifications" name="notifications" value="{{habit.notifications}}" required>
+            </div>
+            <div class="form-group">
+                <label for="goals">Goals</label>
+                <textarea class="form-control" id="goals" name="goals" required>{{habit.goals}}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea class="form-control" id="notes" name="notes" required>{{habit.notes}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
 
-        <main>
-            <form action="/habits" method="POST">
-                <div class="form-group">
-                    <label for="habitName">Habit Name</label>
-                    <input type="text" class="form-control" id="habitName" name="name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="habitDescription">Description</label>
-                    <textarea class="form-control" id="habitDescription" name="description" required></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Add Habit</button>
-            </form>
-        </main>
-
-        <footer class="my-5 text-center">
-            <p>&copy; 2025 Habit Tracker. All rights reserved.</p>
-        </footer>
+        <!-- Back Button -->
+        <a href="/habits" class="btn btn-secondary mt-3">Back to Habits List</a>
     </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

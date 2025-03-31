@@ -51,6 +51,49 @@ app.post('/habits', async (req, res) => {
     }
 });
 
+// Route to Show Edit Form for Habit
+app.get('/habits/:id/edit', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const habit = await Habit.getHabitById(id);
+        if (habit) {
+            res.render('edit-habit', { habit });
+        } else {
+            res.redirect('/habits');
+        }
+    } catch (error) {
+        console.error('Error fetching habit:', error);
+        res.redirect('/habits');
+    }
+});
+
+// Handle Form Submission for Updating a Habit
+app.post('/habits/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, description, frequency, notifications, goals, notes } = req.body;
+    const updatedHabit = { name, description, frequency, notifications, goals, notes };
+    try {
+        await Habit.updateHabit(id, updatedHabit);
+        res.redirect('/habits'); // Redirect to the habits list after updating
+    } catch (error) {
+        console.error('Error updating habit:', error);
+        res.redirect(`/habits/${id}/edit`);
+    }
+});
+
+// Handle Deleting a Habit
+app.post('/habits/:id/delete', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await Habit.deleteHabit(id);
+        res.redirect('/habits'); // Redirect to the habits list after deleting
+    } catch (error) {
+        console.error('Error deleting habit:', error);
+        res.redirect('/habits');
+    }
+});
+
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
