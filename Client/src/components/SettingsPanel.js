@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SettingsPanel.css';
 
-function SettingsPanel({ onClose }) {
+function SettingsPanel({ onClose, onLogout }) {
   const [volume, setVolume] = useState(50);
   const [musicEnabled, setMusicEnabled] = useState(false);
 
@@ -19,8 +19,8 @@ function SettingsPanel({ onClose }) {
   };
 
   const handleLogout = () => {
-    // Placeholder for future implementation
-    alert('Logout functionality will be implemented with backend integration');
+    localStorage.removeItem('token'); // Remove the token from localStorage
+    if (onLogout) onLogout(); // Notify the parent component about the logout
   };
 
   return (
@@ -73,7 +73,7 @@ function SettingsPanel({ onClose }) {
             
             <button 
               className="settings-action-button" 
-              onClick={handleLogout}
+              onClick={handleLogout} 
             >
               Log out
             </button>

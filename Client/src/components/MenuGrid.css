@@ -1,138 +1,137 @@
+/* Overlay for the menu */
 .menu-grid-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5;
-  animation: fadeIn 0.3s ease-in-out;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  z-index: 1000;
 }
 
+/* Container for the menu */
 .menu-grid-container {
-  background-color: white;
-  border: 4px solid #1a3e6c;
-  border-radius: 15px;
-  padding: 20px;
-  width: 80%;
-  max-width: 400px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  height: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: visible;
 }
 
+/* Close button */
 .close-button {
   position: absolute;
-  top: -15px;
-  right: -15px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: white;
-  border: 2px solid #1a3e6c;
-  color: black;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #333;
   cursor: pointer;
-  padding: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s ease;
-  z-index: 6;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .close-button:hover {
-  background-color: #f0f8ff;
+  transform: scale(1.2);
+  color: #ff0000;
 }
 
+/* Pentagon layout */
 .menu-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 15px;
+  position: relative;
+  width: 220px;
+  height: 220px;
+  position: relative;
+  overflow: visible;
 }
 
 .menu-grid-item {
+  position: absolute;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  border: 2px solid #1a3e6c;
-  border-radius: 10px;
-  padding: 10px 5px;
+  background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient background */
+  color: white;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.menu-grid-item:nth-child(1) {
+  top: 0;
+  left: 50%;
+  --translate-x: -50%;
+  --translate-y: -40%;
+  transform: translate(var(--translate-x), var(--translate-y));
+}
+
+.menu-grid-item:nth-child(2) {
+  top: 40%;
+  right: 0;
+  --translate-x: 30%;
+  --translate-y: -40%;
+  transform: translate(var(--translate-x), var(--translate-y));
+}
+
+.menu-grid-item:nth-child(3) {
+  bottom: 0;
+  left: 65%;
+  --translate-x: -20%;
+  --translate-y: 40%;
+  transform: translate(var(--translate-x), var(--translate-y));
+}
+
+.menu-grid-item:nth-child(4) {
+  bottom: 0;
+  left: 35%;
+  --translate-x: -80%;
+  --translate-y: 40%;
+  transform: translate(var(--translate-x), var(--translate-y));
+}
+
+.menu-grid-item:nth-child(5) {
+  top: 40%;
+  left: 0;
+  --translate-x: -30%;
+  --translate-y: -40%;
+  transform: translate(var(--translate-x), var(--translate-y));
+}
+
+/* Hover effect */
 .menu-grid-item:hover {
-  transform: scale(1.05);
-  background-color: #f0f8ff;
+  transform: translate(var(--translate-x, 0), var(--translate-y, 0)) scale(1.2); /* Combine translate and scale */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4); /* Slightly stronger shadow */
+  z-index: 10; /* Ensure the hovered item appears above others */
 }
 
+/* Placeholder for icons */
 .menu-icon-placeholder {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #1a3e6c;
-  border-radius: 5px;
+  width: 35px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
   margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Label for menu items */
 .menu-label {
-  margin-top: 8px;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: bold;
-  color: black;
+  text-align: center;
+  text-transform: capitalize;
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Responsive adjustments */
-@media screen and (max-width: 600px) {
-  .menu-grid-container {
-    width: 90%;
-    padding: 15px;
-  }
-  
-  .menu-grid {
-    gap: 10px;
-  }
-  
-  .menu-icon-placeholder {
-    width: 35px;
-    height: 35px;
-  }
-  
-  .menu-label {
-    font-size: 0.8rem;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .menu-grid-container {
-    width: 95%;
-    padding: 10px;
-  }
-  
-  .menu-grid {
-    gap: 8px;
-  }
-  
-  .menu-icon-placeholder {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .menu-label {
-    font-size: 0.7rem;
-  }
-} 
