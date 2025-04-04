@@ -9,8 +9,10 @@ import HabitDetailsPanel from './components/HabitDetailsPanel';
 import FishSelectionPanel from './components/FishSelectionPanel';
 import SettingsPanel from './components/SettingsPanel';
 import CheckFishPanel from './components/CheckFishPanel';
+import FishDetailPanel from './components/FishDetailPanel';
 import AuthPanel from './components/AuthPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
+import axios from 'axios';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,6 +27,8 @@ function App() {
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [habitDetails, setHabitDetails] = useState(null);
   const [completedHabits, setCompletedHabits] = useState([]);
+  const [habits, setHabits] = useState([]); // Store habits fetched from the backend
+  const [selectedFish, setSelectedFish] = useState(null); // Selected fish for stats
 
   // Check if the user is logged in on app load
   useEffect(() => {
@@ -32,6 +36,25 @@ function App() {
     if (token) {
       setIsLoggedIn(true);
     }
+  }, []);
+
+  // Fetch habits from the backend
+  useEffect(() => {
+    const fetchHabits = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const response = await axios.get('http://localhost:5000/habits', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        });
+        setHabits(response.data); // Set the habits data
+      } catch (err) {
+        console.error('Error fetching habits:', err);
+      }
+    };
+
+    fetchHabits();
   }, []);
 
   // Handle login
@@ -147,16 +170,42 @@ function App() {
     setIsFishSelectionOpen(false);
   };
 
+  // Handle fish click to show stats
+  const handleFishClick = (habit) => {
+    setSelectedFish(habit);
+  };
+
+  // Close the FishDetailPanel
+  const handleCloseStats = () => {
+    setSelectedFish(null);
+  };
+
   return (
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
+      {habits.map((habit) => {
+  const isSwimmingRight = Math.random() > 0.5; // Randomly decide swim direction
+  const randomTop = Math.random() * 80; // Random vertical position (0-80% of viewport height)
+  const randomDuration = 20 + Math.random() * 5; // Random swim duration (10-15 seconds)
+
+  return (
+    <div
+      key={`swimming-${habit._id}`}
+      className={`swimming-fish ${isSwimmingRight ? 'swim-right' : 'swim-left'}`}
+      onClick={() => handleFishClick(habit)}
+      style={{
+        backgroundImage: `url(${habit.fish?.image || '/images/fish/default-fish.png'})`,
+        top: `${randomTop}vh`, // Random vertical position
+        '--animation-duration': `${randomDuration}s`, // Random swim duration
+      }}
+    ></div>
+  );
+})}
+
         {!isLoggedIn ? (
           <AuthPanel onLogin={handleLogin} />
         ) : (
           <>
-            {/* <button onClick={handleLogout} className="logout-button">
-              Logout
-            </button> */}
             <MenuButton
               isOpen={
                 isMenuOpen ||
@@ -198,6 +247,13 @@ function App() {
                 onBack={handleBackToHabitDetails}
                 onComplete={handleHabitComplete}
                 habitDetails={habitDetails}
+              />
+            )}
+            {selectedFish && (
+              <FishDetailPanel
+                fish={selectedFish.fish}
+                onBack={handleCloseStats}
+                onClose={handleCloseStats}
               />
             )}
           </>
