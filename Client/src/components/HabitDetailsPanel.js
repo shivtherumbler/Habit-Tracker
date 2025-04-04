@@ -7,6 +7,7 @@ function HabitDetailsPanel({ onClose, onBack, onNext, selectedHabit }) {
   const [notificationTime, setNotificationTime] = useState('');
   const [goals, setGoals] = useState('');
   const [notes, setNotes] = useState('');
+  const [error, setError] = useState(null);
 
   const handleFrequencyChange = (e) => {
     setFrequency(parseInt(e.target.value));
@@ -29,13 +30,19 @@ function HabitDetailsPanel({ onClose, onBack, onNext, selectedHabit }) {
   };
 
   const handleNextClick = () => {
+    if (!frequency || !notificationTime || !goals || !notes) {
+      setError('Please fill out all fields before proceeding.');
+      return;
+    }
+
     const habitDetails = {
-      habit: selectedHabit,
+      habitName: selectedHabit.label,
       frequency,
-      notificationTime,
+      notifications: notificationTime,
       goals,
-      notes
+      notes,
     };
+
     if (onNext) onNext(habitDetails);
   };
 
@@ -44,53 +51,53 @@ function HabitDetailsPanel({ onClose, onBack, onNext, selectedHabit }) {
       <div className="habit-details-container">
         <button className="close-button" onClick={onClose}>✕</button>
         <h2 className="habit-details-title">add fish</h2>
-        
+
         <div className="habit-details-content">
           <div className="form-content">
             <h3 className="habit-name">{selectedHabit.label}</h3>
-            
+
             <div className="form-group">
               <label htmlFor="frequency">frequency</label>
               <div className="frequency-selector">
-                <input 
-                  type="number" 
-                  id="frequency" 
-                  min="1" 
-                  max="7" 
-                  value={frequency} 
+                <input
+                  type="number"
+                  id="frequency"
+                  min="1"
+                  max="7"
+                  value={frequency}
                   onChange={handleFrequencyChange}
                 />
                 <span className="frequency-label">times per week</span>
               </div>
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="notification">notifications</label>
-              <input 
-                type="time" 
-                id="notification" 
-                value={notificationTime} 
+              <input
+                type="time"
+                id="notification"
+                value={notificationTime}
                 onChange={handleNotificationTimeChange}
                 className="notification-input"
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="goals">goals</label>
-              <textarea 
-                id="goals" 
-                value={goals} 
+              <textarea
+                id="goals"
+                value={goals}
                 onChange={handleGoalsChange}
                 placeholder="What do you want to achieve with this habit?"
                 className="text-input"
               ></textarea>
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="notes">other notes</label>
-              <textarea 
-                id="notes" 
-                value={notes} 
+              <textarea
+                id="notes"
+                value={notes}
                 onChange={handleNotesChange}
                 placeholder="Any additional notes about this habit"
                 className="text-input"
@@ -98,14 +105,13 @@ function HabitDetailsPanel({ onClose, onBack, onNext, selectedHabit }) {
             </div>
           </div>
           
-          <NavigationButtons 
-            onBack={handleBackClick} 
-            onNext={handleNextClick} 
-          />
-        </div>
-      </div>
-    </div>
-  );
+          {error && <p className="error-message">{error}</p>}
+
+<NavigationButtons onBack={handleBackClick} onNext={handleNextClick} />
+</div>
+</div>
+</div>
+);
 }
 
-export default HabitDetailsPanel; 
+export default HabitDetailsPanel;

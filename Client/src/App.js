@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import MenuButton from './components/MenuButton';
 import MenuGrid from './components/MenuGrid';
@@ -10,13 +10,20 @@ import FishSelectionPanel from './components/FishSelectionPanel';
 import SettingsPanel from './components/SettingsPanel';
 import CheckFishPanel from './components/CheckFishPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
+import Login from './components/Login';
+import Signup from './components/Signup';
 
 function App() {
+  // Authentication states
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showSignup, setShowSignup] = useState(true);
+
+  // Menu and panel states
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isAddFishOpen, setIsAddFishOpen] = useState(false);
-  const [isHabitDetailsOpen, setIsHabitDetailsOpen] = useState(false);
+  const [isHabitDetailsOpen, setIsHabitDetailsOpen] =useState(false);
   const [isFishSelectionOpen, setIsFishSelectionOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isCheckFishOpen, setIsCheckFishOpen] = useState(false);
@@ -24,29 +31,40 @@ function App() {
   const [habitDetails, setHabitDetails] = useState(null);
   const [completedHabits, setCompletedHabits] = useState([]);
 
+  // Check if the user is logged in on app load
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  // Handle login
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+  };
+
+  // Toggle between login and signup screens
+  const toggleAuthScreen = () => {
+    setShowSignup(!showSignup);
+  };
+
+  // Menu toggle logic
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-    if (isTutorialOpen) {
-      setIsTutorialOpen(false);
-    }
-    if (isAboutOpen) {
-      setIsAboutOpen(false);
-    }
-    if (isAddFishOpen) {
-      setIsAddFishOpen(false);
-    }
-    if (isHabitDetailsOpen) {
-      setIsHabitDetailsOpen(false);
-    }
-    if (isFishSelectionOpen) {
-      setIsFishSelectionOpen(false);
-    }
-    if (isSettingsOpen) {
-      setIsSettingsOpen(false);
-    }
-    if (isCheckFishOpen) {
-      setIsCheckFishOpen(false);
-    }
+    setIsTutorialOpen(false);
+    setIsAboutOpen(false);
+    setIsAddFishOpen(false);
+    setIsHabitDetailsOpen(false);
+    setIsFishSelectionOpen(false);
+    setIsSettingsOpen(false);
+    setIsCheckFishOpen(false);
   };
 
   const closeMenu = () => {
@@ -55,13 +73,7 @@ function App() {
 
   const openTutorial = () => {
     setIsTutorialOpen(true);
-    setIsMenuOpen(false);
-    setIsAboutOpen(false);
-    setIsAddFishOpen(false);
-    setIsHabitDetailsOpen(false);
-    setIsFishSelectionOpen(false);
-    setIsSettingsOpen(false);
-    setIsCheckFishOpen(false);
+    closeMenu();
   };
 
   const closeTutorial = () => {
@@ -70,13 +82,7 @@ function App() {
 
   const openAbout = () => {
     setIsAboutOpen(true);
-    setIsMenuOpen(false);
-    setIsTutorialOpen(false);
-    setIsAddFishOpen(false);
-    setIsHabitDetailsOpen(false);
-    setIsFishSelectionOpen(false);
-    setIsSettingsOpen(false);
-    setIsCheckFishOpen(false);
+    closeMenu();
   };
 
   const closeAbout = () => {
@@ -85,13 +91,7 @@ function App() {
 
   const openAddFish = () => {
     setIsAddFishOpen(true);
-    setIsMenuOpen(false);
-    setIsTutorialOpen(false);
-    setIsAboutOpen(false);
-    setIsHabitDetailsOpen(false);
-    setIsFishSelectionOpen(false);
-    setIsSettingsOpen(false);
-    setIsCheckFishOpen(false);
+    closeMenu();
   };
 
   const closeAddFish = () => {
@@ -100,13 +100,7 @@ function App() {
 
   const openSettings = () => {
     setIsSettingsOpen(true);
-    setIsMenuOpen(false);
-    setIsTutorialOpen(false);
-    setIsAboutOpen(false);
-    setIsAddFishOpen(false);
-    setIsHabitDetailsOpen(false);
-    setIsFishSelectionOpen(false);
-    setIsCheckFishOpen(false);
+    closeMenu();
   };
 
   const closeSettings = () => {
@@ -115,13 +109,7 @@ function App() {
 
   const openCheckFish = () => {
     setIsCheckFishOpen(true);
-    setIsMenuOpen(false);
-    setIsTutorialOpen(false);
-    setIsAboutOpen(false);
-    setIsAddFishOpen(false);
-    setIsHabitDetailsOpen(false);
-    setIsFishSelectionOpen(false);
-    setIsSettingsOpen(false);
+    closeMenu();
   };
 
   const closeCheckFish = () => {
@@ -160,30 +148,50 @@ function App() {
     // Add the completed habit with fish selection to our array
     setCompletedHabits([...completedHabits, completeHabit]);
     console.log('Completed habit:', completeHabit);
-    
+
     // Close all panels and return to aquarium
     setIsFishSelectionOpen(false);
     setSelectedHabit(null);
     setHabitDetails(null);
-    
-    // Show a success message or confirmation (in a future update)
   };
 
   const closeFishSelection = () => {
     setIsFishSelectionOpen(false);
   };
 
+  // Render login/signup screen if not logged in
+  if (!isLoggedIn) {
+    return showSignup ? (
+      <Signup onToggleAuth={toggleAuthScreen} />
+    ) : (
+      <Login onLogin={handleLogin} onToggleAuth={toggleAuthScreen} />
+    );
+  }
+
+  // Render the main app if logged in
   return (
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
         {/* Menu components */}
-        <MenuButton 
-          isOpen={isMenuOpen || isTutorialOpen || isAboutOpen || isAddFishOpen || isHabitDetailsOpen || isFishSelectionOpen || isSettingsOpen || isCheckFishOpen} 
-          toggleMenu={toggleMenu} 
+        <MenuButton
+          isOpen={
+            isMenuOpen ||
+            isTutorialOpen ||
+            isAboutOpen ||
+            isAddFishOpen ||
+            isHabitDetailsOpen ||
+            isFishSelectionOpen ||
+            isSettingsOpen ||
+            isCheckFishOpen
+          }
+          toggleMenu={toggleMenu}
         />
-        <MenuGrid 
-          isOpen={isMenuOpen} 
-          onClose={closeMenu} 
+        <MenuGrid
+          isOpen={isMenuOpen}
+          onClose={closeMenu}
           onTutorialClick={openTutorial}
           onAboutClick={openAbout}
           onAddFishClick={openAddFish}
@@ -196,7 +204,7 @@ function App() {
         {isSettingsOpen && <SettingsPanel onClose={closeSettings} />}
         {isCheckFishOpen && <CheckFishPanel onClose={closeCheckFish} onAddFishClick={openAddFish} />}
         {isHabitDetailsOpen && selectedHabit && (
-          <HabitDetailsPanel 
+          <HabitDetailsPanel
             onClose={closeHabitDetails}
             onBack={handleBackToAddFish}
             onNext={handleHabitDetailsNext}
@@ -204,7 +212,7 @@ function App() {
           />
         )}
         {isFishSelectionOpen && habitDetails && (
-          <FishSelectionPanel 
+          <FishSelectionPanel
             onClose={closeFishSelection}
             onBack={handleBackToHabitDetails}
             onComplete={handleHabitComplete}

@@ -1,60 +1,56 @@
 const express = require('express');
 const router = express.Router();
-const { createHabit, getHabits, getHabitById } = require('../models/Habit');
+const { authenticate } = require('../middleware/authMiddleware');
+const { createHabit, getHabits, getHabitById, updateHabit, deleteHabit } = require('../models/Habit');
 
-// Show all habits
-router.get('/habits', async (req, res) => {
+// Debug the imported functions
+console.log('createHabit:', createHabit);
+console.log('getHabits:', getHabits);
+console.log('getHabitById:', getHabitById);
+console.log('updateHabit:', updateHabit);
+console.log('deleteHabit:', deleteHabit);
+console.log('authenticate:', authenticate);
+
+// Get all habits
+router.get('/habits', authenticate, async (req, res) => {
     try {
         const habits = await getHabits();
-        res.render('habits', { habits });
+        res.status(200).json(habits);
     } catch (error) {
         console.error('Error fetching habits:', error);
-        res.render('habits', { habits: [] });
+        res.status(500).json({ error: 'Failed to fetch habits' });
     }
 });
 
-// Show form to add a new habit
-router.get('/habits/add', (req, res) => {
-    res.render('add-habit');
-});
-
-// Create a new habit
-router.post('/habits', async (req, res) => {
-    const { user, habitName, frequency, notifications, goals, notes } = req.body;
-
+// Add a new habit
+router.post('/habits', authenticate, async (req, res) => {
+    console.log('Request body:', req.body);
+  
+    const { habitName, frequency, notifications, goals, notes, fish } = req.body;
+  
     const newHabit = {
-        user,
-        habitName,
-        frequency,
-        notifications: notifications === 'true',
-        goals,
-        notes,
-        completions: [] // Start with an empty completions array
+      user: req.user.userId, // Associate habit with the logged-in user
+      habitName,
+      frequency,
+      notifications,
+      goals,
+      notes,
+      fish,
+      completions: [],
     };
-
+  
     try {
-        await createHabit(newHabit);
-        res.redirect('/habits');
+      console.log('Inserting habit into MongoDB:', newHabit);
+      await createHabit(newHabit);
+      res.status(201).json({ message: 'Habit added successfully' });
     } catch (error) {
-        console.error('Error creating habit:', error);
-        res.render('add-habit', { error: 'Error creating habit' });
+      console.error('Error creating habit:', error);
+      res.status(500).json({ error: 'Failed to add habit' });
     }
-});
+  });
 
-// Show form to edit a habit
-router.get('/habits/:id/edit', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const habit = await getHabitById(id);
-        res.render('edit-habit', { habit });
-    } catch (error) {
-        console.error('Error fetching habit for editing:', error);
-        res.redirect('/habits');
-    }
-});
-
-// Update an existing habit
-router.post('/habits/:id', async (req, res) => {
+// Update a habit
+router.put('/habits/:id', authenticate, async (req, res) => {
     const { id } = req.params;
     const { habitName, frequency, notifications, goals, notes } = req.body;
 
@@ -62,15 +58,28 @@ router.post('/habits/:id', async (req, res) => {
         const updatedHabit = {
             habitName,
             frequency,
-            notifications: notifications === 'true',
+            notifications,
             goals,
-            notes
+            notes,
         };
         await updateHabit(id, updatedHabit);
-        res.redirect('/habits');
+        res.status(200).json({ message: 'Habit updated successfully' });
     } catch (error) {
         console.error('Error updating habit:', error);
-        res.redirect(`/habits/${id}/edit`);
+        res.status(500).json({ error: 'Failed to update habit' });
+    }
+});
+
+// Delete a habit
+router.delete('/habits/:id', authenticate, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await deleteHabit(id);
+        res.status(200).json({ message: 'Habit deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting habit:', error);
+        res.status(500).json({ error: 'Failed to delete habit' });
     }
 });
 

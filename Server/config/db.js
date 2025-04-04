@@ -1,4 +1,3 @@
-// config/db.js
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
@@ -12,6 +11,7 @@ let db;
 const connectDB = async () => {
     try {
         if (!db) {
+            console.log('Attempting to connect to MongoDB...');
             await client.connect();
             db = client.db('habit_tracker');
             console.log('Connected to MongoDB');
