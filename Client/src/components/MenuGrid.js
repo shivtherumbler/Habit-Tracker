@@ -7,9 +7,13 @@ function MenuGrid({ isOpen, onClose, onTutorialClick, onAboutClick, onAddFishCli
   const menuItems = [
     { id: 1, label: 'check fish' },
     { id: 2, label: 'add fish' },
-    { id: 3, label: 'tutorial' },
-    { id: 4, label: 'about' },
-    { id: 5, label: 'settings' }
+    { id: 3, label: 'stats' },
+    { id: 4, label: 'camera' },
+    { id: 5, label: 'shop' },
+    { id: 6, label: 'tank' },
+    { id: 7, label: 'tutorial' },
+    { id: 8, label: 'about' },
+    { id: 9, label: 'settings' }
   ];
 
   const handleMenuItemClick = (item) => {

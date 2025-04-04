@@ -9,26 +9,27 @@ import HabitDetailsPanel from './components/HabitDetailsPanel';
 import FishSelectionPanel from './components/FishSelectionPanel';
 import SettingsPanel from './components/SettingsPanel';
 import CheckFishPanel from './components/CheckFishPanel';
-import FishDetailPanel from './components/FishDetailPanel';
-import AuthPanel from './components/AuthPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
-import axios from 'axios';
+import Login from './components/Login';
+import Signup from './components/Signup';
 
 function App() {
+  // Authentication states
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showSignup, setShowSignup] = useState(true);
+
+  // Menu and panel states
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isAddFishOpen, setIsAddFishOpen] = useState(false);
-  const [isHabitDetailsOpen, setIsHabitDetailsOpen] = useState(false);
+  const [isHabitDetailsOpen, setIsHabitDetailsOpen] =useState(false);
   const [isFishSelectionOpen, setIsFishSelectionOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isCheckFishOpen, setIsCheckFishOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [habitDetails, setHabitDetails] = useState(null);
   const [completedHabits, setCompletedHabits] = useState([]);
-  const [habits, setHabits] = useState([]); // Store habits fetched from the backend
-  const [selectedFish, setSelectedFish] = useState(null); // Selected fish for stats
 
   // Check if the user is logged in on app load
   useEffect(() => {
@@ -36,25 +37,6 @@ function App() {
     if (token) {
       setIsLoggedIn(true);
     }
-  }, []);
-
-  // Fetch habits from the backend
-  useEffect(() => {
-    const fetchHabits = async () => {
-      try {
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await axios.get('http://localhost:5000/habits', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-          },
-        });
-        setHabits(response.data); // Set the habits data
-      } catch (err) {
-        console.error('Error fetching habits:', err);
-      }
-    };
-
-    fetchHabits();
   }, []);
 
   // Handle login
@@ -66,6 +48,11 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
+  };
+
+  // Toggle between login and signup screens
+  const toggleAuthScreen = () => {
+    setShowSignup(!showSignup);
   };
 
   // Menu toggle logic
@@ -158,9 +145,11 @@ function App() {
   };
 
   const handleHabitComplete = (completeHabit) => {
+    // Add the completed habit with fish selection to our array
     setCompletedHabits([...completedHabits, completeHabit]);
     console.log('Completed habit:', completeHabit);
 
+    // Close all panels and return to aquarium
     setIsFishSelectionOpen(false);
     setSelectedHabit(null);
     setHabitDetails(null);
@@ -170,93 +159,65 @@ function App() {
     setIsFishSelectionOpen(false);
   };
 
-  // Handle fish click to show stats
-  const handleFishClick = (habit) => {
-    setSelectedFish(habit);
-  };
+  // Render login/signup screen if not logged in
+  if (!isLoggedIn) {
+    return showSignup ? (
+      <Signup onToggleAuth={toggleAuthScreen} />
+    ) : (
+      <Login onLogin={handleLogin} onToggleAuth={toggleAuthScreen} />
+    );
+  }
 
-  // Close the FishDetailPanel
-  const handleCloseStats = () => {
-    setSelectedFish(null);
-  };
-
+  // Render the main app if logged in
   return (
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
-      {habits.map((habit) => {
-  const isSwimmingRight = Math.random() > 0.5; // Randomly decide swim direction
-  const randomTop = Math.random() * 80; // Random vertical position (0-80% of viewport height)
-  const randomDuration = 20 + Math.random() * 5; // Random swim duration (10-15 seconds)
-
-  return (
-    <div
-      key={`swimming-${habit._id}`}
-      className={`swimming-fish ${isSwimmingRight ? 'swim-right' : 'swim-left'}`}
-      onClick={() => handleFishClick(habit)}
-      style={{
-        backgroundImage: `url(${habit.fish?.image || '/images/fish/default-fish.png'})`,
-        top: `${randomTop}vh`, // Random vertical position
-        '--animation-duration': `${randomDuration}s`, // Random swim duration
-      }}
-    ></div>
-  );
-})}
-
-        {!isLoggedIn ? (
-          <AuthPanel onLogin={handleLogin} />
-        ) : (
-          <>
-            <MenuButton
-              isOpen={
-                isMenuOpen ||
-                isTutorialOpen ||
-                isAboutOpen ||
-                isAddFishOpen ||
-                isHabitDetailsOpen ||
-                isFishSelectionOpen ||
-                isSettingsOpen ||
-                isCheckFishOpen
-              }
-              toggleMenu={toggleMenu}
-            />
-            <MenuGrid
-              isOpen={isMenuOpen}
-              onClose={closeMenu}
-              onTutorialClick={openTutorial}
-              onAboutClick={openAbout}
-              onAddFishClick={openAddFish}
-              onSettingsClick={openSettings}
-              onCheckFishClick={openCheckFish}
-            />
-            {isTutorialOpen && <TutorialPanel onClose={closeTutorial} />}
-            {isAboutOpen && <AboutPanel onClose={closeAbout} />}
-            {isAddFishOpen && <AddFishPanel onClose={closeAddFish} onHabitSelect={handleHabitSelect} />}
-            {isSettingsOpen && <SettingsPanel onClose={closeSettings} onLogout={handleLogout} />}
-            {isCheckFishOpen && <CheckFishPanel onClose={closeCheckFish} onAddFishClick={openAddFish} />}
-            {isHabitDetailsOpen && selectedHabit && (
-              <HabitDetailsPanel
-                onClose={closeHabitDetails}
-                onBack={handleBackToAddFish}
-                onNext={handleHabitDetailsNext}
-                selectedHabit={selectedHabit}
-              />
-            )}
-            {isFishSelectionOpen && habitDetails && (
-              <FishSelectionPanel
-                onClose={closeFishSelection}
-                onBack={handleBackToHabitDetails}
-                onComplete={handleHabitComplete}
-                habitDetails={habitDetails}
-              />
-            )}
-            {selectedFish && (
-              <FishDetailPanel
-                fish={selectedFish.fish}
-                onBack={handleCloseStats}
-                onClose={handleCloseStats}
-              />
-            )}
-          </>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+        {/* Menu components */}
+        <MenuButton
+          isOpen={
+            isMenuOpen ||
+            isTutorialOpen ||
+            isAboutOpen ||
+            isAddFishOpen ||
+            isHabitDetailsOpen ||
+            isFishSelectionOpen ||
+            isSettingsOpen ||
+            isCheckFishOpen
+          }
+          toggleMenu={toggleMenu}
+        />
+        <MenuGrid
+          isOpen={isMenuOpen}
+          onClose={closeMenu}
+          onTutorialClick={openTutorial}
+          onAboutClick={openAbout}
+          onAddFishClick={openAddFish}
+          onSettingsClick={openSettings}
+          onCheckFishClick={openCheckFish}
+        />
+        {isTutorialOpen && <TutorialPanel onClose={closeTutorial} />}
+        {isAboutOpen && <AboutPanel onClose={closeAbout} />}
+        {isAddFishOpen && <AddFishPanel onClose={closeAddFish} onHabitSelect={handleHabitSelect} />}
+        {isSettingsOpen && <SettingsPanel onClose={closeSettings} />}
+        {isCheckFishOpen && <CheckFishPanel onClose={closeCheckFish} onAddFishClick={openAddFish} />}
+        {isHabitDetailsOpen && selectedHabit && (
+          <HabitDetailsPanel
+            onClose={closeHabitDetails}
+            onBack={handleBackToAddFish}
+            onNext={handleHabitDetailsNext}
+            selectedHabit={selectedHabit}
+          />
+        )}
+        {isFishSelectionOpen && habitDetails && (
+          <FishSelectionPanel
+            onClose={closeFishSelection}
+            onBack={handleBackToHabitDetails}
+            onComplete={handleHabitComplete}
+            habitDetails={habitDetails}
+          />
         )}
       </div>
     </div>
