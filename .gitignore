@@ -134,10 +134,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-/Client/node_modules
-/Client/node_modules
 /node_modules
-/Client
 /Client/node_modules
-/node_modules
-/node_modules/.bin
+/Server/node_modules
+
