@@ -8,8 +8,21 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 const cors = require('cors'); // Import CORS
 
-// Enable CORS for all origins
-app.use(cors());
+
+// Allow specific origins
+const allowedOrigins = [
+    'http://localhost:3000', // For local development
+    'https://habit-tracker-imm2025.netlify.app', // For production
+  ];
+  
+  // Enable CORS for all origins
+  app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Allow cookies if needed
+  }));
+  
 
 // Middlewares
 app.use(bodyParser.json());

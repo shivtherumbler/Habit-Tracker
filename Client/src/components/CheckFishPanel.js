@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './CheckFishPanel.css';
 import FishDetailPanel from './FishDetailPanel';
 import apiClient from '../apiClient';

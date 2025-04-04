@@ -11,9 +11,11 @@ function AuthPanel({ onLogin }) {
   const handleAuth = async () => {
     try {
       setError(null);
-      const endpoint = isSignup ? 'http://localhost:5000/signup' : 'http://localhost:5000/login';
+      const endpoint = isSignup
+        ? `${process.env.REACT_APP_API_URL}/signup`
+        : `${process.env.REACT_APP_API_URL}/login`;
       const response = await axios.post(endpoint, { username, password });
-
+  
       if (!isSignup) {
         // If logging in, store the token and notify the parent component
         const { token } = response.data;
@@ -29,7 +31,7 @@ function AuthPanel({ onLogin }) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.');
     }
   };
-
+  
   return (
     <div className="auth-panel">
       <h2>{isSignup ? 'Sign Up' : 'Log In'}</h2>

@@ -1,4 +1,6 @@
-const BASE_URL = 'https://delightful-rugelach-108ed0.netlify.app/';
+import axios from 'axios';
+
+const BASE_URL = 'https://habit-tracker-imm2025.netlify.app';
 
 const apiClient = async (endpoint, options = {}) => {
   const response = await axios({

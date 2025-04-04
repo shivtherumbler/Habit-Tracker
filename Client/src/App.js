@@ -12,7 +12,6 @@ import CheckFishPanel from './components/CheckFishPanel';
 import FishDetailPanel from './components/FishDetailPanel';
 import AuthPanel from './components/AuthPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
-import axios from 'axios';
 import apiClient from './apiClient';
 
 
