@@ -1,189 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './CheckFishPanel.css';
 import FishDetailPanel from './FishDetailPanel';
-// Import sample fish images to use as placeholders
-import blueTang from '../images/fish/blue-tang.png';
-import clownFish from '../images/fish/clown-fish.png';
-import guppy from '../images/fish/guppy.png';
-import betta from '../images/fish/betta.png';
-import goldfish from '../images/fish/goldfish.png';
-import angelfish from '../images/fish/angelfish.png';
 
 function CheckFishPanel({ onClose, onAddFishClick }) {
-  // This will be replaced with real data from the backend later
-  // For now, we'll use a state to toggle between the two views for demonstration
-  const [hasFish, setHasFish] = useState(true);
+  const [habits, setHabits] = useState([]); // Store habits fetched from the backend
   const [selectedFish, setSelectedFish] = useState(null);
-  
-  // Get current date for comparison
-  const currentDate = new Date();
-  const today = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-  
-  // Sample fish data (this would come from backend)
-  const sampleFishData = [
-    {
-      id: 1,
-      name: 'Practice language',
-      image: blueTang,
-      lastCompleted: 'Feb 15 2023',
-      isHungry: true,
-      status: 'hungry',
-      goals: 'be able to order food at a cafe'
-    },
-    {
-      id: 2,
-      name: 'Walk',
-      image: clownFish,
-      lastCompleted: 'Feb 10 2023',
-      isHungry: true,
-      status: 'hungry',
-      goals: '10,000 steps daily'
-    },
-    {
-      id: 3,
-      name: 'Read books',
-      image: guppy,
-      lastCompleted: 'Feb 8 2023',
-      isHungry: true,
-      status: 'hungry',
-      goals: 'finish 2 books per month'
-    },
-    {
-      id: 4,
-      name: 'Meditate',
-      image: betta,
-      lastCompleted: today,
-      isHungry: false,
-      status: 'full',
-      goals: '15 minutes every morning'
-    },
-    {
-      id: 5,
-      name: 'Write journal',
-      image: goldfish,
-      lastCompleted: 'Feb 12 2023',
-      isHungry: true,
-      status: 'hungry',
-      goals: 'document daily thoughts and progress'
-    },
-    {
-      id: 6,
-      name: 'Study coding',
-      image: angelfish,
-      lastCompleted: 'Feb 13 2023',
-      isHungry: true,
-      status: 'hungry',
-      goals: 'build one small project per week'
-    }
-  ];
-  
-  // Toggle between views for demonstration purposes
-  const toggleView = () => {
-    setHasFish(!hasFish);
-  };
-  
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  // Fetch habits from the backend
+  useEffect(() => {
+    const fetchHabits = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const response = await axios.get('http://localhost:5000/habits', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        });
+        console.log('Fetched habits:', response.data); // Debug the fetched data
+        setHabits(response.data); // Set the habits data
+      } catch (err) {
+        console.error('Error fetching habits:', err);
+        setError('Failed to load habits. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHabits();
+  }, []);
+
   // Handle fish item click
   const handleFishClick = (fish) => {
     setSelectedFish(fish);
   };
-  
+
   // Return to fish list
   const handleBackToList = () => {
     setSelectedFish(null);
   };
-  
+
   // No fish state
   const renderNoFishState = () => (
     <div className="no-fish-container">
       <p className="no-fish-message">No fish yet! Add some fish to start tracking your habits!</p>
       <div className="button-container">
-        <button 
-          className="back-button" 
-          onClick={onClose}
-        >
+        <button className="back-button" onClick={onClose}>
           &lt; back
         </button>
-        <button 
-          className="check-fish-button add-fish-button" 
-          onClick={onAddFishClick}
-        >
+        <button className="check-fish-button add-fish-button" onClick={onAddFishClick}>
           add fish
         </button>
       </div>
     </div>
   );
-  
+
   // Has fish state with fish list
   const renderFishListState = () => (
     <div className="fish-list-container">
       <h3 className="fish-list-title">Here are the fish that are currently in your aquarium</h3>
-      
+
       <div className="fish-list">
-        {sampleFishData.map(fish => (
-          <div 
-            key={fish.id} 
+        {habits.map((habit) => (
+          <div
+            key={habit._id} // Use the habit's unique ID from the database
             className="fish-list-item"
-            onClick={() => handleFishClick(fish)}
+            onClick={() => handleFishClick(habit.fish)}
           >
             <div className="fish-list-image-container">
-              <img src={fish.image} alt={fish.name} className="fish-list-image" />
+              <img
+                src={habit.fish?.image || '/images/fish/default-fish.png'} // Use the image path from the database or fallback to default
+                alt={habit.fish?.name || 'Unnamed Fish'} // Fallback for missing fish name
+                className="fish-list-image"
+              />
             </div>
             <div className="fish-list-details">
-              <h4 className="fish-list-name">{fish.name}</h4>
-              <p className="fish-list-date">last completed: {fish.lastCompleted}</p>
+              <h4 className="fish-list-name">{habit.fish?.name || 'Unnamed Fish'}</h4> {/* Fallback for missing fish name */}
+              <p className="fish-list-date">Habit: {habit.habitName || 'Unnamed Habit'}</p>
+              <p className="fish-list-date">Last completed: {habit.lastCompleted || 'N/A'}</p>
             </div>
           </div>
         ))}
       </div>
-      
+
       <div className="button-container">
-        <button 
-          className="back-button" 
-          onClick={onClose}
-        >
+        <button className="back-button" onClick={onClose}>
           &lt; back
         </button>
-        <button 
-          className="check-fish-button add-fish-button" 
-          onClick={onAddFishClick}
-        >
+        <button className="check-fish-button add-fish-button" onClick={onAddFishClick}>
           add fish
         </button>
       </div>
     </div>
   );
-  
+
   // If a fish is selected, show its details
   if (selectedFish) {
-    return (
-      <FishDetailPanel 
-        fish={selectedFish} 
-        onBack={handleBackToList} 
-        onClose={onClose} 
-      />
-    );
+    return <FishDetailPanel fish={selectedFish} onBack={handleBackToList} onClose={onClose} />;
   }
-  
+
   return (
     <div className="check-fish-overlay">
       <div className="check-fish-container">
-        <button className="close-button" onClick={onClose}>✕</button>
+        <button className="close-button" onClick={onClose}>
+          ✕
+        </button>
         <h2 className="check-fish-title">check fish</h2>
-        
+
         <div className="check-fish-content">
-          {/* For development purposes, add a button to toggle between views */}
-          <button 
-            onClick={toggleView} 
-            className="toggle-view-button"
-          >
-            Toggle View (for development only)
-          </button>
-          
-          {hasFish ? renderFishListState() : renderNoFishState()}
+          {loading ? (
+            <p>Loading habits...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : habits.length === 0 ? (
+            renderNoFishState()
+          ) : (
+            renderFishListState()
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default CheckFishPanel; 
+export default CheckFishPanel;

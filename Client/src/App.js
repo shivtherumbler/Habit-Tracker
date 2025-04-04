@@ -9,21 +9,16 @@ import HabitDetailsPanel from './components/HabitDetailsPanel';
 import FishSelectionPanel from './components/FishSelectionPanel';
 import SettingsPanel from './components/SettingsPanel';
 import CheckFishPanel from './components/CheckFishPanel';
+import AuthPanel from './components/AuthPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
-import Login from './components/Login';
-import Signup from './components/Signup';
 
 function App() {
-  // Authentication states
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showSignup, setShowSignup] = useState(true);
-
-  // Menu and panel states
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isAddFishOpen, setIsAddFishOpen] = useState(false);
-  const [isHabitDetailsOpen, setIsHabitDetailsOpen] =useState(false);
+  const [isHabitDetailsOpen, setIsHabitDetailsOpen] = useState(false);
   const [isFishSelectionOpen, setIsFishSelectionOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isCheckFishOpen, setIsCheckFishOpen] = useState(false);
@@ -48,11 +43,6 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
-  };
-
-  // Toggle between login and signup screens
-  const toggleAuthScreen = () => {
-    setShowSignup(!showSignup);
   };
 
   // Menu toggle logic
@@ -145,11 +135,9 @@ function App() {
   };
 
   const handleHabitComplete = (completeHabit) => {
-    // Add the completed habit with fish selection to our array
     setCompletedHabits([...completedHabits, completeHabit]);
     console.log('Completed habit:', completeHabit);
 
-    // Close all panels and return to aquarium
     setIsFishSelectionOpen(false);
     setSelectedHabit(null);
     setHabitDetails(null);
@@ -159,65 +147,60 @@ function App() {
     setIsFishSelectionOpen(false);
   };
 
-  // Render login/signup screen if not logged in
-  if (!isLoggedIn) {
-    return showSignup ? (
-      <Signup onToggleAuth={toggleAuthScreen} />
-    ) : (
-      <Login onLogin={handleLogin} onToggleAuth={toggleAuthScreen} />
-    );
-  }
-
-  // Render the main app if logged in
   return (
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
-        {/* Menu components */}
-        <MenuButton
-          isOpen={
-            isMenuOpen ||
-            isTutorialOpen ||
-            isAboutOpen ||
-            isAddFishOpen ||
-            isHabitDetailsOpen ||
-            isFishSelectionOpen ||
-            isSettingsOpen ||
-            isCheckFishOpen
-          }
-          toggleMenu={toggleMenu}
-        />
-        <MenuGrid
-          isOpen={isMenuOpen}
-          onClose={closeMenu}
-          onTutorialClick={openTutorial}
-          onAboutClick={openAbout}
-          onAddFishClick={openAddFish}
-          onSettingsClick={openSettings}
-          onCheckFishClick={openCheckFish}
-        />
-        {isTutorialOpen && <TutorialPanel onClose={closeTutorial} />}
-        {isAboutOpen && <AboutPanel onClose={closeAbout} />}
-        {isAddFishOpen && <AddFishPanel onClose={closeAddFish} onHabitSelect={handleHabitSelect} />}
-        {isSettingsOpen && <SettingsPanel onClose={closeSettings} />}
-        {isCheckFishOpen && <CheckFishPanel onClose={closeCheckFish} onAddFishClick={openAddFish} />}
-        {isHabitDetailsOpen && selectedHabit && (
-          <HabitDetailsPanel
-            onClose={closeHabitDetails}
-            onBack={handleBackToAddFish}
-            onNext={handleHabitDetailsNext}
-            selectedHabit={selectedHabit}
-          />
-        )}
-        {isFishSelectionOpen && habitDetails && (
-          <FishSelectionPanel
-            onClose={closeFishSelection}
-            onBack={handleBackToHabitDetails}
-            onComplete={handleHabitComplete}
-            habitDetails={habitDetails}
-          />
+        {!isLoggedIn ? (
+          <AuthPanel onLogin={handleLogin} />
+        ) : (
+          <>
+            {/* <button onClick={handleLogout} className="logout-button">
+              Logout
+            </button> */}
+            <MenuButton
+              isOpen={
+                isMenuOpen ||
+                isTutorialOpen ||
+                isAboutOpen ||
+                isAddFishOpen ||
+                isHabitDetailsOpen ||
+                isFishSelectionOpen ||
+                isSettingsOpen ||
+                isCheckFishOpen
+              }
+              toggleMenu={toggleMenu}
+            />
+            <MenuGrid
+              isOpen={isMenuOpen}
+              onClose={closeMenu}
+              onTutorialClick={openTutorial}
+              onAboutClick={openAbout}
+              onAddFishClick={openAddFish}
+              onSettingsClick={openSettings}
+              onCheckFishClick={openCheckFish}
+            />
+            {isTutorialOpen && <TutorialPanel onClose={closeTutorial} />}
+            {isAboutOpen && <AboutPanel onClose={closeAbout} />}
+            {isAddFishOpen && <AddFishPanel onClose={closeAddFish} onHabitSelect={handleHabitSelect} />}
+            {isSettingsOpen && <SettingsPanel onClose={closeSettings} onLogout={handleLogout} />}
+            {isCheckFishOpen && <CheckFishPanel onClose={closeCheckFish} onAddFishClick={openAddFish} />}
+            {isHabitDetailsOpen && selectedHabit && (
+              <HabitDetailsPanel
+                onClose={closeHabitDetails}
+                onBack={handleBackToAddFish}
+                onNext={handleHabitDetailsNext}
+                selectedHabit={selectedHabit}
+              />
+            )}
+            {isFishSelectionOpen && habitDetails && (
+              <FishSelectionPanel
+                onClose={closeFishSelection}
+                onBack={handleBackToHabitDetails}
+                onComplete={handleHabitComplete}
+                habitDetails={habitDetails}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
