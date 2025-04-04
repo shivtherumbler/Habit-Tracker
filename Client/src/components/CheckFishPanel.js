@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CheckFishPanel.css';
 import FishDetailPanel from './FishDetailPanel';
+import apiClient from '../apiClient';
+
 
 function CheckFishPanel({ onClose, onAddFishClick }) {
   const [habits, setHabits] = useState([]); // Store habits fetched from the backend
@@ -15,9 +17,10 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
       try {
         setLoading(true);
         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await axios.get('http://localhost:5000/habits', {
+        const response = await apiClient('/habits', {
+          method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
         console.log('Fetched habits:', response.data); // Debug the fetched data
@@ -29,7 +32,7 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
         setLoading(false);
       }
     };
-
+  
     fetchHabits();
   }, []);
 

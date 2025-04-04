@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './HabitConfirmationPanel.css';
+import apiClient from '../apiClient';
+
 
 function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
   const [loading, setLoading] = useState(false);
@@ -10,24 +12,20 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
     if (onBack) onBack();
   };
   const handleAddToAquarium = async () => {
-    console.log('Habit details being sent to backend:', habitDetails); // Log the data
-
     try {
       setLoading(true);
       setError(null);
-
-      // Retrieve the token from localStorage
+  
       const token = localStorage.getItem('token');
-
-      // Send habit details to the backend with the Authorization header
-      const response = await axios.post('http://localhost:5000/habits', habitDetails, {
+      const response = await apiClient('/habits', {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          Authorization: `Bearer ${token}`,
         },
+        data: habitDetails,
       });
-
+  
       console.log('Habit added:', response.data);
-
       if (onComplete) onComplete(habitDetails);
     } catch (err) {
       console.error('Error adding habit:', err);

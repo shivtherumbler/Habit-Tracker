@@ -13,6 +13,8 @@ import FishDetailPanel from './components/FishDetailPanel';
 import AuthPanel from './components/AuthPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
 import axios from 'axios';
+import apiClient from './apiClient';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,9 +45,10 @@ function App() {
     const fetchHabits = async () => {
       try {
         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await axios.get('http://localhost:5000/habits', {
+        const response = await apiClient('/habits', {
+          method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
         setHabits(response.data); // Set the habits data
@@ -53,7 +56,7 @@ function App() {
         console.error('Error fetching habits:', err);
       }
     };
-
+  
     fetchHabits();
   }, []);
 
