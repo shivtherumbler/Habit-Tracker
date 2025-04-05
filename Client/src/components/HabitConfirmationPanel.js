@@ -12,27 +12,27 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
   };
   const handleAddToAquarium = async () => {
     try {
-      setLoading(true);
-      setError(null);
-  
-      const token = localStorage.getItem('token');
-      const response = await apiClient(`/habits`, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        data: habitDetails,
-    });
-  
-      console.log('Habit added:', response.data);
-      if (onComplete) onComplete(habitDetails);
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const response = await apiClient('/habits', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            },
+            data: habitDetails, // Send habit details in the request body
+        });
+
+        console.log('Habit added:', response.data);
+        if (onComplete) onComplete(habitDetails);
     } catch (err) {
-      console.error('Error adding habit:', err);
-      setError('Failed to add habit. Please try again.');
+        console.error('Error adding habit:', err);
+        setError('Failed to add habit. Please try again.');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
 return (
     <div className="habit-confirmation-overlay">
