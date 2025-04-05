@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/authMiddleware');
+const { authenticateToken } = require('../middleware/authMiddleware');
 const { createHabit, getHabits, getHabitById, updateHabit, deleteHabit } = require('../models/Habit');
 
 // Debug the imported functions
@@ -9,7 +9,7 @@ console.log('getHabits:', getHabits);
 console.log('getHabitById:', getHabitById);
 console.log('updateHabit:', updateHabit);
 console.log('deleteHabit:', deleteHabit);
-console.log('authenticate:', authenticate);
+console.log('authenticate:', authenticateToken);
 
 // Get all habits (protected route)
 router.get('/habits', authenticateToken, async (req, res) => {
