@@ -1,7 +1,4 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'your_jwt_secret'; // Replace with a secure secret in production
-
-const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
