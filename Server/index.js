@@ -31,6 +31,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Connect to the Database
 connectDB();
 
+app.get('/', (req, res) => {
+    res.send('Backend is running!');
+});
 
 // Routes
 app.use(habitRoutes);
