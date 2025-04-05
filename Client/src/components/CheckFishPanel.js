@@ -14,23 +14,23 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
   useEffect(() => {
     const fetchHabits = async () => {
       try {
-        setLoading(true);
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await apiClient(`/habits`, {
-          method: 'GET',
-          headers: {
-              Authorization: `Bearer ${token}`,
-          },
-      });
-        console.log('Fetched habits:', response.data); // Debug the fetched data
-        setHabits(response.data); // Set the habits data
+          setLoading(true);
+          const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+          const response = await apiClient(`/habits`, {
+              method: 'GET',
+              headers: {
+                  Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              },
+          });
+          console.log('Fetched habits:', response.data); // Debug the fetched data
+          setHabits(response.data); // Set the habits data
       } catch (err) {
-        console.error('Error fetching habits:', err);
-        setError('Failed to load habits. Please try again.');
+          console.error('Error fetching habits:', err);
+          setError('Failed to load habits. Please try again.');
       } finally {
-        setLoading(false);
+          setLoading(false);
       }
-    };
+  };
   
     fetchHabits();
   }, []);

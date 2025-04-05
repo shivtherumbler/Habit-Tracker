@@ -8,9 +8,6 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 const cors = require('cors'); // Import CORS
 
-// Connect to the Database
-connectDB();
-
 // Allow specific origins
 const allowedOrigins = [
     'http://localhost:3000', // For local development
