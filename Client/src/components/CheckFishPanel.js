@@ -16,12 +16,12 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
       try {
         setLoading(true);
         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await apiClient('/habits', {
+        const response = await apiClient(`/habits`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
           },
-        });
+      });
         console.log('Fetched habits:', response.data); // Debug the fetched data
         setHabits(response.data); // Set the habits data
       } catch (err) {

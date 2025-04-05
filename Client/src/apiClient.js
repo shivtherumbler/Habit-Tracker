@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://habit-tracker-imm2025.netlify.app';
+// Use the environment variable for the base URL
+const BASE_URL = process.env.REACT_APP_API_URL; // Ensure this does not have a trailing slash
 
 const apiClient = async (endpoint, options = {}) => {
-  const response = await axios({
-    url: `${BASE_URL}${endpoint}`,
-    ...options,
-  });
-  return response;
-};
+    const url = `${BASE_URL}${endpoint}`;
+    console.log('API URL:', url); // Debugging log
+    const response = await axios({
+      url,
+      ...options,
+    });
+    return response;
+  };
 
 export default apiClient;

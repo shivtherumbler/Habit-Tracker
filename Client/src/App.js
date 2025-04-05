@@ -44,12 +44,12 @@ function App() {
     const fetchHabits = async () => {
       try {
         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await apiClient('/habits', {
+        const response = await apiClient(`/habits`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
           },
-        });
+      });
         setHabits(response.data); // Set the habits data
       } catch (err) {
         console.error('Error fetching habits:', err);

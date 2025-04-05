@@ -16,13 +16,13 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
       setError(null);
   
       const token = localStorage.getItem('token');
-      const response = await apiClient('/habits', {
+      const response = await apiClient(`/habits`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
         },
         data: habitDetails,
-      });
+    });
   
       console.log('Habit added:', response.data);
       if (onComplete) onComplete(habitDetails);
