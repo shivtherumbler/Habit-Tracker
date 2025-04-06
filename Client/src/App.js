@@ -74,7 +74,7 @@ function App() {
         console.log('Habits fetched after login:', response.data); // Debugging log
 
         // Filter habits by the logged-in user's ID
-        const userHabits = response.data.filter(habit => habit.user === userId);
+        const userHabits = response.data.filter(habit => habit.userId === userId);
         setHabits(userHabits); // Set the filtered habits data
     } catch (err) {
         console.error('Error during login:', err);
@@ -203,7 +203,7 @@ const handleLogout = () => {
         console.log('Habits refetched after completing a habit:', response.data);
 
         // Filter habits by the logged-in user's ID
-        const userHabits = response.data.filter(habit => habit.user === userId);
+        const userHabits = response.data.filter(habit => habit.userId === userId);
         setHabits(userHabits); // Update the habits state
     } catch (err) {
         console.error('Error refetching habits after completing a habit:', err);
@@ -227,22 +227,22 @@ const handleLogout = () => {
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
       {habits.map((habit) => {
-    const isSwimmingRight = Math.random() > 0.5; // Randomly decide swim direction
-    const randomTop = Math.random() * 80; // Random vertical position (0-80% of viewport height)
-    const randomDuration = 20 + Math.random() * 5; // Random swim duration (10-15 seconds)
+  const isSwimmingRight = Math.random() > 0.5; // Randomly decide swim direction
+  const randomTop = Math.random() * 80; // Random vertical position (0-80% of viewport height)
+  const randomDuration = 20 + Math.random() * 5; // Random swim duration (20-25 seconds)
 
-    return (
-        <div
-            key={`swimming-${habit._id}`}
-            className={`swimming-fish ${isSwimmingRight ? 'swim-right' : 'swim-left'}`}
-            onClick={() => handleFishClick(habit)}
-            style={{
-                backgroundImage: `url(${habit.fish?.image || '/images/fish/default-fish.png'})`,
-                top: `${randomTop}vh`, // Random vertical position
-                '--animation-duration': `${randomDuration}s`, // Random swim duration
-            }}
-        ></div>
-    );
+  return (
+    <div
+      key={`swimming-${habit._id}`}
+      className={`swimming-fish ${isSwimmingRight ? 'swim-right' : 'swim-left'}`}
+      onClick={() => handleFishClick(habit)}
+      style={{
+        backgroundImage: `url(${habit.fish?.image || '/images/fish/default-fish.png'})`,
+        top: `${randomTop}vh`,
+        '--animation-duration': `${randomDuration}s`,
+      }}
+    ></div>
+  );
 })}
 
         {!isLoggedIn ? (

@@ -3,7 +3,6 @@ import './CheckFishPanel.css';
 import FishDetailPanel from './FishDetailPanel';
 import apiClient from '../apiClient';
 
-
 function CheckFishPanel({ onClose, onAddFishClick }) {
   const [habits, setHabits] = useState([]); // Store habits fetched from the backend
   const [selectedFish, setSelectedFish] = useState(null);
@@ -13,33 +12,33 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
   // Fetch habits from the backend
   useEffect(() => {
     const fetchHabits = async () => {
-        try {
-            setLoading(true);
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-            console.log('Token being sent to backend:', token); // Debugging log
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        console.log('Token being sent to backend:', token); // Debugging log
 
-            const response = await apiClient('/habits', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-                },
-            });
+        const response = await apiClient('/habits', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        });
 
-            console.log('API response from /habits:', response.data); // Debugging log
+        console.log('API response from /habits:', response.data); // Debugging log
 
-            // Decode the token to extract the userId
-            const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT payload
-            const userId = decodedToken.userId;
+        // Decode the token to extract the userId
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT payload
+        const userId = decodedToken.userId;
 
-            // Filter habits by the logged-in user's ID
-            const userHabits = response.data.filter(habit => habit.user === userId);
-            setHabits(userHabits); // Set the filtered habits data
-        } catch (err) {
-            console.error('Error fetching habits:', err);
-            setError('Failed to load habits. Please try again.');
-        } finally {
-            setLoading(false);
-        }
+        // Filter habits by the logged-in user's ID
+        const userHabits = response.data.filter((habit) => habit.userId === userId);
+        setHabits(userHabits); // Set the filtered habits data
+      } catch (err) {
+        console.error('Error fetching habits:', err);
+        setError('Failed to load habits. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchHabits(); // Ensure this is being called
@@ -47,6 +46,7 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
 
   // Handle fish item click
   const handleFishClick = (habit) => {
+    console.log('Selected habit:', habit); // Debug log
     setSelectedFish(habit); // Pass the entire habit object
   };
 
@@ -80,7 +80,7 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
           <div
             key={habit._id} // Use the habit's unique ID from the database
             className="fish-list-item"
-            onClick={() => handleFishClick(habit.fish)}
+            onClick={() => handleFishClick(habit)}
           >
             <div className="fish-list-image-container">
               <img
@@ -111,9 +111,15 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
 
   // If a fish is selected, show its details
   if (selectedFish) {
-    return <FishDetailPanel fish={selectedFish} onBack={handleBackToList} onClose={onClose} />;
+    return (
+      <FishDetailPanel
+        fish={selectedFish.fish} // Pass the fish object (including image)
+        habitId={selectedFish._id} // Pass the habit ID
+        onBack={handleBackToList}
+        onClose={onClose}
+      />
+    );
   }
-
   return (
     <div className="check-fish-overlay">
       <div className="check-fish-container">

@@ -23,6 +23,8 @@ const getHabits = async (userId) => {
 const getHabitById = async (id) => {
     const db = getDb();
     const habitsCollection = db.collection('habits');
+
+    // Convert id to ObjectId
     return await habitsCollection.findOne({ _id: new ObjectId(id) });
 };
 

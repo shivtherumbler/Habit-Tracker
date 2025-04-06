@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middleware/authMiddleware');
 const { createHabit, getHabits, getHabitById, updateHabit, deleteHabit } = require('../models/Habit');
+const { ObjectId } = require('mongodb'); // Ensure this is imported
+
 
 // Debug the imported functions
 console.log('createHabit:', createHabit);
@@ -14,8 +16,8 @@ console.log('authenticate:', authenticate);
 // Get all habits
 router.get('/habits', authenticate, async (req, res) => {
     try {
-        const userHabits = await getHabits(req.user.userId); // Fetch habits filtered by userId in the database
-        res.status(200).json(userHabits); // Return only the user's habits
+        const userHabits = await getHabits(req.user.userId); // Fetch habits filtered by userId
+        res.status(200).json(userHabits); // Return habits, including _id
     } catch (error) {
         console.error('Error fetching habits:', error);
         res.status(500).json({ error: 'Failed to fetch habits' });
@@ -24,6 +26,11 @@ router.get('/habits', authenticate, async (req, res) => {
 
 router.get('/habits/:id', authenticate, async (req, res) => {
     const { id } = req.params;
+
+    // Validate the habit ID
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid habit ID format' });
+    }
 
     try {
         const habit = await getHabitById(id); // Fetch habit by ID from the database
@@ -53,8 +60,9 @@ router.post('/habits', authenticate, async (req, res) => {
     };
 
     try {
-        await createHabit(newHabit);
-        res.status(201).json({ message: 'Habit added successfully' });
+        const result = await createHabit(newHabit); // Save habit to the database
+        const savedHabit = result.ops[0]; // Get the saved habit with the generated _id
+        res.status(201).json(savedHabit); // Return the saved habit, including _id
     } catch (error) {
         console.error('Error creating habit:', error);
         res.status(500).json({ error: 'Failed to add habit' });

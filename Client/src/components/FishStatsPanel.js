@@ -11,8 +11,26 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
 
   useEffect(() => {
     const fetchHabitDetails = async () => {
+      if (!habitId) {
+        console.error('No habit ID provided.');
+        setError('No habit ID provided.');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await apiClient.get(`/habits/${habitId}`);
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        console.log('Token being sent to backend:', token);
+
+        const response = await apiClient(`/habits/${habitId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log('Habit details fetched successfully:', response.data);
         setHabitDetails(response.data);
       } catch (err) {
         console.error('Failed to fetch habit details:', err);
@@ -21,7 +39,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
         setLoading(false);
       }
     };
-  
+
     fetchHabitDetails();
   }, [habitId]);
 
@@ -34,7 +52,6 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
 
   const handleSaveEdit = async () => {
     try {
-      // Example of saving edited values (to be implemented)
       const updatedDetails = {
         ...habitDetails,
         // Add logic to update fields here
@@ -63,15 +80,15 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
       <div className="fish-stats-container">
         <button className="close-button" onClick={onClose}>✕</button>
         <h2 className="fish-stats-title">Fish Stats</h2>
-        
+
         <div className="fish-stats-content">
           <h3 className="fish-name">{fish.name || 'Unnamed Fish'}</h3>
-          
+
           <div className="fish-image-container">
-            <img 
-              src={fish.image || '/images/fish/default-fish.png'} 
-              alt={fish.name || 'Unnamed Fish'} 
-              className="fish-image" 
+            <img
+              src={fish.image || '/images/fish/default-fish.png'}
+              alt={fish.name || 'Unnamed Fish'}
+              className="fish-image"
             />
           </div>
 
@@ -87,7 +104,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
               <>
                 <div className="detail-row">
                   <button className="edit-button" onClick={handleEditClick}>
-                      edit &gt;
+                    edit &gt;
                   </button>
                   <span className="detail-label">Habit Name:</span>
                   <span className="detail-value">{habitName || 'No habit name provided'}</span>
