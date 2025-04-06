@@ -30,6 +30,7 @@ function App() {
   const [completedHabits, setCompletedHabits] = useState([]);
   const [habits, setHabits] = useState([]); // Store habits fetched from the backend
   const [selectedFish, setSelectedFish] = useState(null); // Selected fish for stats
+  const [userId, setUserId] = useState(null); // Add a state to store the userId
 
   // Check if the user is logged in on app load
   useEffect(() => {
@@ -39,36 +40,55 @@ function App() {
     }
   }, []);
 
-  // Fetch habits from the backend
-  useEffect(() => {
-    const fetchHabits = async () => {
-      try {
+  const handleLogin = async () => {
+    try {
         const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        const response = await apiClient(`/habits`, {
-          method: 'GET',
-          headers: {
-              Authorization: `Bearer ${token}`,
-          },
-      });
-        setHabits(response.data); // Set the habits data
-      } catch (err) {
-        console.error('Error fetching habits:', err);
-      }
-    };
-  
-    fetchHabits();
-  }, []);
+        console.log('Token retrieved from localStorage:', token); // Debugging log
 
-  // Handle login
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+        if (!token) {
+            throw new Error('Token not found');
+        }
 
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-  };
+        // Decode the token to extract the userId
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT payload
+        console.log('Decoded token:', decodedToken); // Debugging log
+
+        const userId = decodedToken.userId;
+        if (!userId) {
+            throw new Error('UserId not found in token');
+        }
+
+        setUserId(userId); // Save the userId in state
+        console.log('Logged in as userId:', userId); // Debugging log
+
+        setIsLoggedIn(true);
+        setIsMenuOpen(true); // Open the menu after login
+
+        // Fetch habits for the logged-in user
+        const response = await apiClient('/habits', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+        console.log('Habits fetched after login:', response.data); // Debugging log
+
+        // Filter habits by the logged-in user's ID
+        const userHabits = response.data.filter(habit => habit.user === userId);
+        setHabits(userHabits); // Set the filtered habits data
+    } catch (err) {
+        console.error('Error during login:', err);
+    }
+};
+
+// Handle logout
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  setIsLoggedIn(false);
+  setIsSettingsOpen(false);
+  setHabits([]); // Clear the habits state
+  setUserId(null); // Clear the userId state
+};
 
   // Menu toggle logic
   const toggleMenu = () => {
@@ -159,15 +179,36 @@ function App() {
     setIsHabitDetailsOpen(true);
   };
 
-  const handleHabitComplete = (completeHabit) => {
-    setCompletedHabits([...completedHabits, completeHabit]);
-    console.log('Completed habit:', completeHabit);
+  const handleHabitComplete = async (completeHabit) => {
+    try {
+        setCompletedHabits([...completedHabits, completeHabit]);
+        console.log('Completed habit:', completeHabit);
 
-    setIsFishSelectionOpen(false);
-    setSelectedHabit(null);
-    setHabitDetails(null);
-  };
+        setIsFishSelectionOpen(false);
+        setSelectedHabit(null);
+        setHabitDetails(null);
 
+        // Refetch habits after completing a habit
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not found');
+        }
+
+        const response = await apiClient('/habits', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+        console.log('Habits refetched after completing a habit:', response.data);
+
+        // Filter habits by the logged-in user's ID
+        const userHabits = response.data.filter(habit => habit.user === userId);
+        setHabits(userHabits); // Update the habits state
+    } catch (err) {
+        console.error('Error refetching habits after completing a habit:', err);
+    }
+};
   const closeFishSelection = () => {
     setIsFishSelectionOpen(false);
   };
@@ -186,22 +227,22 @@ function App() {
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
       {habits.map((habit) => {
-  const isSwimmingRight = Math.random() > 0.5; // Randomly decide swim direction
-  const randomTop = Math.random() * 80; // Random vertical position (0-80% of viewport height)
-  const randomDuration = 20 + Math.random() * 5; // Random swim duration (10-15 seconds)
+    const isSwimmingRight = Math.random() > 0.5; // Randomly decide swim direction
+    const randomTop = Math.random() * 80; // Random vertical position (0-80% of viewport height)
+    const randomDuration = 20 + Math.random() * 5; // Random swim duration (10-15 seconds)
 
-  return (
-    <div
-      key={`swimming-${habit._id}`}
-      className={`swimming-fish ${isSwimmingRight ? 'swim-right' : 'swim-left'}`}
-      onClick={() => handleFishClick(habit)}
-      style={{
-        backgroundImage: `url(${habit.fish?.image || '/images/fish/default-fish.png'})`,
-        top: `${randomTop}vh`, // Random vertical position
-        '--animation-duration': `${randomDuration}s`, // Random swim duration
-      }}
-    ></div>
-  );
+    return (
+        <div
+            key={`swimming-${habit._id}`}
+            className={`swimming-fish ${isSwimmingRight ? 'swim-right' : 'swim-left'}`}
+            onClick={() => handleFishClick(habit)}
+            style={{
+                backgroundImage: `url(${habit.fish?.image || '/images/fish/default-fish.png'})`,
+                top: `${randomTop}vh`, // Random vertical position
+                '--animation-duration': `${randomDuration}s`, // Random swim duration
+            }}
+        ></div>
+    );
 })}
 
         {!isLoggedIn ? (
@@ -234,7 +275,15 @@ function App() {
             {isAboutOpen && <AboutPanel onClose={closeAbout} />}
             {isAddFishOpen && <AddFishPanel onClose={closeAddFish} onHabitSelect={handleHabitSelect} />}
             {isSettingsOpen && <SettingsPanel onClose={closeSettings} onLogout={handleLogout} />}
-            {isCheckFishOpen && <CheckFishPanel onClose={closeCheckFish} onAddFishClick={openAddFish} />}
+            {isCheckFishOpen && (
+              <CheckFishPanel
+                onClose={closeCheckFish}
+                onAddFishClick={() => {
+                  closeCheckFish();
+                  openAddFish();
+                }}
+              />
+            )}
             {isHabitDetailsOpen && selectedHabit && (
               <HabitDetailsPanel
                 onClose={closeHabitDetails}
@@ -244,12 +293,12 @@ function App() {
               />
             )}
             {isFishSelectionOpen && habitDetails && (
-              <FishSelectionPanel
+            <FishSelectionPanel
                 onClose={closeFishSelection}
                 onBack={handleBackToHabitDetails}
                 onComplete={handleHabitComplete}
                 habitDetails={habitDetails}
-              />
+            />
             )}
             {selectedFish && (
               <FishDetailPanel

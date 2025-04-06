@@ -13,31 +13,41 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
   // Fetch habits from the backend
   useEffect(() => {
     const fetchHabits = async () => {
-      try {
-          setLoading(true);
-          const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-          const response = await apiClient(`/habits`, {
-              method: 'GET',
-              headers: {
-                  Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-              },
-          });
-          console.log('Fetched habits:', response.data); // Debug the fetched data
-          setHabits(response.data); // Set the habits data
-      } catch (err) {
-          console.error('Error fetching habits:', err);
-          setError('Failed to load habits. Please try again.');
-      } finally {
-          setLoading(false);
-      }
-  };
-  
-    fetchHabits();
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+            console.log('Token being sent to backend:', token); // Debugging log
+
+            const response = await apiClient('/habits', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+                },
+            });
+
+            console.log('API response from /habits:', response.data); // Debugging log
+
+            // Decode the token to extract the userId
+            const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT payload
+            const userId = decodedToken.userId;
+
+            // Filter habits by the logged-in user's ID
+            const userHabits = response.data.filter(habit => habit.user === userId);
+            setHabits(userHabits); // Set the filtered habits data
+        } catch (err) {
+            console.error('Error fetching habits:', err);
+            setError('Failed to load habits. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchHabits(); // Ensure this is being called
   }, []);
 
   // Handle fish item click
-  const handleFishClick = (fish) => {
-    setSelectedFish(fish);
+  const handleFishClick = (habit) => {
+    setSelectedFish(habit); // Pass the entire habit object
   };
 
   // Return to fish list

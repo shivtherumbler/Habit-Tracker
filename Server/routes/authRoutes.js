@@ -50,7 +50,6 @@ router.get('/signup', (req, res) => {
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    // Validate input
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required.' });
     }
@@ -71,9 +70,15 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials.' });
         }
 
-        // Generate a JWT token
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
+        // Generate a JWT token with only userId
+        const token = jwt.sign(
+            { userId: user._id.toString() }, // Include only userId
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
+        console.log('Generated token payload:', { userId: user._id }); // Debugging log
+        console.log('Generated token:', token); // Debugging log
         res.status(200).json({ token });
     } catch (error) {
         console.error('Error during login:', error);

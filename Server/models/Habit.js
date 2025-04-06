@@ -5,15 +5,18 @@ const { ObjectId } = require('mongodb');
 const createHabit = async (habitData) => {
     const db = getDb();
     const habitsCollection = db.collection('habits');
-    console.log('Data being inserted into MongoDB:', habitData); // Log the data
+    console.log('Data being inserted into MongoDB:', habitData); // Debugging log
     return await habitsCollection.insertOne(habitData);
 };
 
 // Get all habits
-const getHabits = async () => {
+const getHabits = async (userId) => {
     const db = getDb();
     const habitsCollection = db.collection('habits');
-    return await habitsCollection.find().toArray();
+    console.log('Filtering habits for userId:', userId); // Debugging log
+    const filteredHabits = await habitsCollection.find({ userId }).toArray(); // Filter by userId
+    console.log('Filtered habits from DB:', filteredHabits); // Debugging log
+    return filteredHabits;
 };
 
 // Get a habit by ID
