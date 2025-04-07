@@ -76,9 +76,10 @@
 /* Fish swimming animation */
 .swimming-fish {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  background-size: cover;
+  width: 60px;
+  height: 60px;
+  background-size: contain; /* Ensure the entire image fits */
+  background-repeat: no-repeat; /* Prevent tiling */
   background-position: center;
   cursor: pointer;
 }

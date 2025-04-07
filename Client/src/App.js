@@ -32,54 +32,73 @@ function App() {
   const [selectedFish, setSelectedFish] = useState(null); // Selected fish for stats
   const [userId, setUserId] = useState(null); // Add a state to store the userId
 
-  // Check if the user is logged in on app load
+   // Reusable function to fetch habits
+   const fetchHabits = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found. Unable to fetch habits.');
+        return;
+      }
+
+      console.log('Fetching habits with token:', token);
+
+      const response = await apiClient('/habits', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Habits fetched:', response.data);
+
+      // Decode the token to extract the userId
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const userId = decodedToken.userId;
+
+      // Filter habits by the logged-in user's ID
+      const userHabits = response.data.filter((habit) => habit.userId === userId);
+      setHabits(userHabits); // Set the filtered habits data
+      setUserId(userId); // Save the userId in state
+    } catch (err) {
+      console.error('Error fetching habits:', err);
+    }
+  };
+
+  // Fetch habits on app load if the user is logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setIsLoggedIn(true);
+      fetchHabits(); // Fetch habits on page reload
     }
   }, []);
 
   const handleLogin = async () => {
     try {
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        console.log('Token retrieved from localStorage:', token); // Debugging log
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token not found');
+      }
 
-        if (!token) {
-            throw new Error('Token not found');
-        }
+      // Decode the token to extract the userId
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const userId = decodedToken.userId;
 
-        // Decode the token to extract the userId
-        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT payload
-        console.log('Decoded token:', decodedToken); // Debugging log
+      if (!userId) {
+        throw new Error('UserId not found in token');
+      }
 
-        const userId = decodedToken.userId;
-        if (!userId) {
-            throw new Error('UserId not found in token');
-        }
+      setUserId(userId);
+      setIsLoggedIn(true);
+      setIsMenuOpen(true); // Open the menu after login
 
-        setUserId(userId); // Save the userId in state
-        console.log('Logged in as userId:', userId); // Debugging log
-
-        setIsLoggedIn(true);
-        setIsMenuOpen(true); // Open the menu after login
-
-        // Fetch habits for the logged-in user
-        const response = await apiClient('/habits', {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-            },
-        });
-        console.log('Habits fetched after login:', response.data); // Debugging log
-
-        // Filter habits by the logged-in user's ID
-        const userHabits = response.data.filter(habit => habit.userId === userId);
-        setHabits(userHabits); // Set the filtered habits data
+      // Fetch habits for the logged-in user
+      await fetchHabits(); // Reuse the fetchHabits function
     } catch (err) {
-        console.error('Error during login:', err);
+      console.error('Error during login:', err);
     }
-};
+  };
 
 // Handle logout
 const handleLogout = () => {

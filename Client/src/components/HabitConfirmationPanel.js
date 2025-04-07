@@ -16,25 +16,23 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
         setLoading(true);
         setError(null);
 
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-        console.log('Token:', token); // Debugging log
-
+        const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('Token not found in localStorage');
         }
 
         const habitData = {
-            ...habitDetails, // Include all existing habit details
+            ...habitDetails,
         };
 
-        console.log('Habit data being sent to backend:', habitData); // Debugging log
+        console.log('Habit data being sent to backend:', habitData);
 
         const response = await apiClient('/habits', {
             method: 'POST',
             headers: {
-                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+                Authorization: `Bearer ${token}`,
             },
-            data: habitData, // Send habit data
+            data: habitData,
         });
 
         console.log('Habit added:', response.data);
