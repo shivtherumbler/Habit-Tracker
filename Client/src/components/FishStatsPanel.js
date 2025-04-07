@@ -8,6 +8,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null); // State for success messages
 
   useEffect(() => {
     const fetchHabitDetails = async () => {
@@ -21,7 +22,6 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        console.log('Token being sent to backend:', token);
 
         const response = await apiClient(`/habits/${habitId}`, {
           method: 'GET',
@@ -30,7 +30,6 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
           },
         });
 
-        console.log('Habit details fetched successfully:', response.data);
         setHabitDetails(response.data);
       } catch (err) {
         console.error('Failed to fetch habit details:', err);
@@ -52,25 +51,50 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
 
   const handleSaveEdit = async () => {
     try {
+      const token = localStorage.getItem('token');
       const updatedDetails = {
         ...habitDetails,
-        // Add logic to update fields here
       };
+
       await apiClient(`/habits/${habitId}`, {
         method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
         data: updatedDetails,
       });
+
       setHabitDetails(updatedDetails); // Update local state
       setIsEditing(false);
+      setSuccessMessage('Habit details updated successfully!'); // Set success message
+      setTimeout(() => setSuccessMessage(null), 2000); // Clear success message after 3 seconds
     } catch (err) {
       console.error('Failed to save habit details:', err);
       setError('Failed to save changes. Please try again.');
     }
   };
 
-  const handleRemoveFish = () => {
-    alert('Fish removal would be implemented in a future update!');
-    onClose();
+  const handleRemoveFish = async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      await apiClient(`/habits/${habitId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSuccessMessage('Fish removed successfully!'); // Set success message
+      setTimeout(() => {
+        setSuccessMessage(null); // Clear success message after 3 seconds
+        onClose(); // Close the panel after deletion
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to remove fish:', err);
+      setError('Failed to remove fish. Please try again.');
+    }
   };
 
   const { habitName, frequency, notifications, goals, lastCompleted } = habitDetails;
@@ -82,6 +106,9 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
         <h2 className="fish-stats-title">Fish Stats</h2>
 
         <div className="fish-stats-content">
+          {successMessage && <div className="success-message">{successMessage}</div>} {/* Success message */}
+          {error && <div className="error-message">{error}</div>} {/* Error message */}
+
           <h3 className="fish-name">{fish.name || 'Unnamed Fish'}</h3>
 
           <div className="fish-image-container">

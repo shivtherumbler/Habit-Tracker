@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import MenuButton from './components/MenuButton';
 import MenuGrid from './components/MenuGrid';
@@ -31,6 +31,52 @@ function App() {
   const [habits, setHabits] = useState([]); // Store habits fetched from the backend
   const [selectedFish, setSelectedFish] = useState(null); // Selected fish for stats
   const [userId, setUserId] = useState(null); // Add a state to store the userId
+  const [volume, setVolume] = useState(50); // Default volume at 50%
+  const audioRef = useRef(null); // Reference to the audio element
+  const [musicEnabled, setMusicEnabled] = useState(true); // Track if music is enabled
+  const [audioInitialized, setAudioInitialized] = useState(false); // Track if audio is initialized
+
+
+  // Handle volume change from SettingsPanel
+  const handleVolumeChange = (newVolume) => {
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume / 100; // Set audio volume (0 to 1)
+    }
+  };
+
+   // Handle music toggle
+   const handleMusicToggle = () => {
+    setMusicEnabled(!musicEnabled);
+    if (audioRef.current) {
+      if (!musicEnabled) {
+        audioRef.current.play().catch((err) => {
+          console.error('Error playing audio:', err);
+        });
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  };
+
+  // Initialize audio playback after user interaction
+  const initializeAudio = () => {
+    if (audioRef.current && !audioInitialized) {
+      audioRef.current.volume = volume / 100; // Set initial volume
+      audioRef.current.play().catch((err) => {
+        console.error('Error playing audio:', err);
+      });
+      setAudioInitialized(true); // Mark audio as initialized
+    }
+  };
+
+// Attach event listener to initialize audio on user interaction
+useEffect(() => {
+  document.addEventListener('click', initializeAudio);
+  return () => {
+    document.removeEventListener('click', initializeAudio);
+  };
+}, [audioInitialized, volume]);
 
    // Reusable function to fetch habits
    const fetchHabits = async () => {
@@ -293,7 +339,16 @@ const handleLogout = () => {
             {isTutorialOpen && <TutorialPanel onClose={closeTutorial} />}
             {isAboutOpen && <AboutPanel onClose={closeAbout} />}
             {isAddFishOpen && <AddFishPanel onClose={closeAddFish} onHabitSelect={handleHabitSelect} />}
-            {isSettingsOpen && <SettingsPanel onClose={closeSettings} onLogout={handleLogout} />}
+            {isSettingsOpen && (
+          <SettingsPanel
+          onClose={() => setIsSettingsOpen(false)}
+          onLogout={handleLogout}
+          onVolumeChange={handleVolumeChange} // Pass volume change handler
+          onMusicToggle={handleMusicToggle} // Pass music toggle handler
+          volume={volume} // Pass current volume
+          musicEnabled={musicEnabled} // Pass current music state
+        />
+        )}
             {isCheckFishOpen && (
               <CheckFishPanel
                 onClose={closeCheckFish}
@@ -329,6 +384,7 @@ const handleLogout = () => {
           </>
         )}
       </div>
+      <audio ref={audioRef} src="/audio/aquarium-fish.mp3" loop />
     </div>
   );
 }

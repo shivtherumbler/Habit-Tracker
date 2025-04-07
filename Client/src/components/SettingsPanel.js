@@ -1,26 +1,16 @@
 import React, { useState } from 'react';
 import './SettingsPanel.css';
 
-function SettingsPanel({ onClose, onLogout }) {
-  const [volume, setVolume] = useState(50);
-  const [musicEnabled, setMusicEnabled] = useState(false);
-
+function SettingsPanel({ onClose, onLogout, onVolumeChange, onMusicToggle, volume, musicEnabled }) {
+  // Handle volume slider change
   const handleVolumeChange = (e) => {
-    setVolume(e.target.value);
+    const newVolume = e.target.value;
+    onVolumeChange(newVolume); // Notify parent component about volume change
   };
 
+  // Handle music toggle
   const handleMusicToggle = () => {
-    setMusicEnabled(!musicEnabled);
-  };
-
-  const handleChangePassword = () => {
-    // Placeholder for future implementation
-    alert('Change password functionality will be implemented with backend integration');
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove the token from localStorage
-    if (onLogout) onLogout(); // Notify the parent component about the logout
+    onMusicToggle(!musicEnabled); // Notify parent component about music toggle
   };
 
   return (
@@ -64,16 +54,10 @@ function SettingsPanel({ onClose, onLogout }) {
           <div className="settings-divider"></div>
           
           <div className="settings-section">
-            <button 
-              className="settings-action-button blue-button" 
-              onClick={handleChangePassword}
-            >
-              Change password
-            </button>
             
             <button 
               className="settings-action-button" 
-              onClick={handleLogout} 
+              onClick={onLogout} 
             >
               Log out
             </button>
@@ -84,4 +68,4 @@ function SettingsPanel({ onClose, onLogout }) {
   );
 }
 
-export default SettingsPanel; 
+export default SettingsPanel;
