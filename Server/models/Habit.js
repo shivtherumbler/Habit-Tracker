@@ -6,7 +6,12 @@ const createHabit = async (habitData) => {
     const db = getDb();
     const habitsCollection = db.collection('habits');
     console.log('Data being inserted into MongoDB:', habitData); // Debugging log
-    return await habitsCollection.insertOne(habitData);
+
+    const result = await habitsCollection.insertOne(habitData);
+    console.log('Insert result:', result); // Debugging log
+
+    // Return the inserted habit with its ID
+    return { ...habitData, _id: result.insertedId };
 };
 
 // Get all habits

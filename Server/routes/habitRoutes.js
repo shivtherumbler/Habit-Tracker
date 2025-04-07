@@ -60,11 +60,14 @@ router.post('/habits', authenticate, async (req, res) => {
     };
 
     try {
-        const result = await createHabit(newHabit); // Save habit to the database
-        const savedHabit = result.ops[0]; // Get the saved habit with the generated _id
-        res.status(201).json(savedHabit); // Return the saved habit, including _id
+        console.log('Saving habit to database:', newHabit); // Debugging log
+        const savedHabit = await createHabit(newHabit); // Save habit to the database
+        console.log('Database operation result:', savedHabit); // Debugging log
+
+        // Return the saved habit with its _id
+        res.status(201).json({ message: 'Habit added successfully', habit: savedHabit });
     } catch (error) {
-        console.error('Error creating habit:', error);
+        console.error('Error creating habit:', error); // Log the error
         res.status(500).json({ error: 'Failed to add habit' });
     }
 });

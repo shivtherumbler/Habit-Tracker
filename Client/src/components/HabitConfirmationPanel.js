@@ -10,7 +10,7 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
   const handleBackClick = () => {
     if (onBack) onBack();
   };
-
+  
   const handleAddToAquarium = async () => {
     try {
         setLoading(true);
@@ -22,7 +22,12 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
         }
 
         const habitData = {
-            ...habitDetails,
+            habitName: habitDetails.habitName || '',
+            frequency: habitDetails.frequency || 0,
+            notifications: habitDetails.notifications || '',
+            goals: habitDetails.goals || '',
+            notes: habitDetails.notes || '',
+            fish: habitDetails.fish || {}, // Ensure fish object is present
         };
 
         console.log('Habit data being sent to backend:', habitData);
@@ -31,15 +36,21 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json', // Ensure correct content type
             },
             data: habitData,
         });
 
-        console.log('Habit added:', response.data);
-        if (onComplete) onComplete(habitDetails);
+        console.log('Habit added successfully:', response.data);
+
+        // Call the onComplete callback if provided
+        if (onComplete) onComplete(response.data.habit);
     } catch (err) {
-        console.error('Error adding habit:', err);
-        setError('Failed to add habit. Please try again.');
+        // Log the full error response for debugging
+        console.error('Error adding habit:', err.response?.data || err.message || err);
+
+        // Set a user-friendly error message
+        setError(err.response?.data?.error || 'Failed to add habit. Please try again.');
     } finally {
         setLoading(false);
     }
