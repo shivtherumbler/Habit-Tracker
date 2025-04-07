@@ -76,7 +76,7 @@ useEffect(() => {
   return () => {
     document.removeEventListener('click', initializeAudio);
   };
-}, [audioInitialized, volume]);
+}, [audioInitialized, volume, initializeAudio]); // Added initializeAudio
 
    // Reusable function to fetch habits
    const fetchHabits = async () => {
@@ -201,10 +201,6 @@ const handleLogout = () => {
   const openSettings = () => {
     setIsSettingsOpen(true);
     closeMenu();
-  };
-
-  const closeSettings = () => {
-    setIsSettingsOpen(false);
   };
 
   const openCheckFish = () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './SettingsPanel.css';
 
 function SettingsPanel({ onClose, onLogout, onVolumeChange, onMusicToggle, volume, musicEnabled }) {
