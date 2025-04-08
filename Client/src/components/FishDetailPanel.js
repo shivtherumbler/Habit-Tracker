@@ -19,7 +19,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
             progress: updatedProgress,
             isHungry: !isHabitComplete,
             status: isHabitComplete ? 'complete' : 'full',
-            lastCompleted: new Date().toISOString(), // Use ISO format for backend compatibility
+            lastCompleted: new Date().toISOString(), // Save in ISO format for backend
         };
 
         // Save the updated data to the backend
@@ -31,8 +31,8 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
                 'Content-Type': 'application/json',
             },
             data: {
-                habitName: fish.habitName, // Ensure habitName is included
-                frequency: fish.frequency, // Ensure frequency is included
+                habitName: fish.habitName || updatedFish.habitName, // Ensure habitName is included
+                frequency: fish.frequency || updatedFish.frequency, // Ensure frequency is included
                 progress: updatedProgress,
                 lastCompleted: updatedFish.lastCompleted,
                 isComplete: isHabitComplete,
@@ -125,9 +125,15 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
             </div>
 
             <div className="fish-detail-row">
-              <span className="fish-detail-label">last completed:</span>
-              <span className="fish-detail-value">{fish.lastCompleted}</span>
-            </div>
+              <span className="fish-detail-label">Last Completed:</span>
+              <span className="fish-detail-value">
+                  {new Date(fish.lastCompleted).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                  })}
+              </span>
+          </div>
 
             <div className="fish-detail-row">
               <span className="fish-detail-label">Progress:</span>
