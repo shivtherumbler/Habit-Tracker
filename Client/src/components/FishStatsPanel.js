@@ -150,7 +150,13 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Last Completed:</span>
-                  <span className="detail-value">{lastCompleted || 'N/A'}</span>
+                  {lastCompleted
+                  ? new Date(lastCompleted).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : 'N/A'}
                 </div>
               </>
             ) : (
