@@ -1,10 +1,10 @@
 **Fishly Project Brief**
 By Team Echo
 
-Mahendru, Shivansh
-Satish Kumar, Siddharth
-Tariq, Kanwal
-Wu, Meggie
+Mahendru, Shivansh;
+Satish Kumar, Siddharth;
+Tariq, Kanwal;
+Wu, Meggie;
 
 A habit tracker reimagined through an interactive aquarium!
 
