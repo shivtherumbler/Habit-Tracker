@@ -92,7 +92,15 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
             <div className="fish-list-details">
               <h4 className="fish-list-name">{habit.fish?.name || 'Unnamed Fish'}</h4> {/* Fallback for missing fish name */}
               <p className="fish-list-date">Habit: {habit.habitName || 'Unnamed Habit'}</p>
-              <p className="fish-list-date">Last completed: {habit.lastCompleted || 'N/A'}</p>
+              <p className="fish-list-date">
+  Last completed: {habit.lastCompleted
+    ? new Date(habit.lastCompleted).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : 'N/A'}
+</p>
             </div>
           </div>
         ))}

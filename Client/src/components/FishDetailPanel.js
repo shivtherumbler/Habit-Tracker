@@ -9,13 +9,24 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
 
   const handleFeedFish = async () => {
     try {
+      // Fetch the latest habit details to ensure all fields are preserved
+      const token = localStorage.getItem('token');
+      const habitResponse = await apiClient(`/habits/${habitId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const latestHabit = habitResponse.data;
+  
       // Increment progress
-      const updatedProgress = (fish.progress || 0) + 1;
-      const isHabitComplete = updatedProgress >= fish.frequency;
+      const updatedProgress = (latestHabit.progress || 0) + 1;
+      const isHabitComplete = updatedProgress >= latestHabit.frequency;
   
       // Prepare updated habit details
-      const updatedFish = {
-        ...fish,
+      const updatedHabit = {
+        ...latestHabit,
         progress: updatedProgress,
         isHungry: !isHabitComplete,
         status: isHabitComplete ? 'complete' : 'full',
@@ -23,30 +34,26 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
       };
   
       // Save the updated data to the backend
-      const token = localStorage.getItem('token');
       const response = await apiClient(`/habits/${habitId}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        data: {
-          habitName: fish.habitName || updatedFish.habitName, // Preserve habitName
-          frequency: fish.frequency || updatedFish.frequency, // Preserve frequency
-          progress: updatedProgress,
-          lastCompleted: updatedFish.lastCompleted,
-          isComplete: isHabitComplete,
-        },
+        data: updatedHabit,
       });
   
       // Update the local state with the response data
       Object.assign(fish, response.data); // Update the fish object with the latest data
   
+      // Mark as completed today
+      setCompletedToday(true);
+  
       alert(
         isHabitComplete
           ? 'Habit completed! Great job!'
           : `Fish fed! Progress: ${Math.min(
-              (updatedProgress / fish.frequency) * 100,
+              (updatedProgress / latestHabit.frequency) * 100,
               100
             ).toFixed(0)}%`
       );
@@ -67,9 +74,9 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       Object.assign(fish, response.data); // Update the fish object with the latest data
-
+  
       // Check if the habit was completed today
       const today = new Date().toLocaleDateString('en-US');
       const lastCompletedDate = new Date(fish.lastCompleted).toLocaleDateString('en-US');
