@@ -151,10 +151,9 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
             <div className="fish-detail-row">
               <span className="fish-detail-label">Progress:</span>
               <span className="fish-detail-value">
-                {Math.min((fish.progress / fish.frequency) * 100, 100).toFixed(
-                  0
-                )}
-                %
+                {fish.progress && fish.frequency
+                  ? `${Math.min((fish.progress / fish.frequency) * 100, 100).toFixed(0)}%`
+                  : '0%'}
               </span>
             </div>
 
