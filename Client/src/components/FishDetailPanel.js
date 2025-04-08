@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './FishDetailPanel.css';
 import FishStatsPanel from './FishStatsPanel';
 import apiClient from '../apiClient';
@@ -6,32 +6,45 @@ import apiClient from '../apiClient';
 function FishDetailPanel({ fish, habitId, onBack, onClose }) {
   const [completedToday, setCompletedToday] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [habitDetails, setHabitDetails] = useState(fish); // Store habit details locally
+
+  // Fetch the latest habit details when the panel is opened
+  useEffect(() => {
+    const fetchHabitDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await apiClient(`/habits/${habitId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setHabitDetails(response.data); // Update local habit details
+        const today = new Date().toLocaleDateString('en-US');
+        const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
+        setCompletedToday(today === lastCompletedDate);
+      } catch (err) {
+        console.error('Error fetching habit details:', err);
+      }
+    };
+
+    fetchHabitDetails();
+  }, [habitId]);
 
   const handleFeedFish = async () => {
     try {
-      // Fetch the latest habit details to ensure all fields are preserved
       const token = localStorage.getItem('token');
-      const habitResponse = await apiClient(`/habits/${habitId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      const latestHabit = habitResponse.data;
-  
-      // Increment progress
-      const updatedProgress = (latestHabit.progress || 0) + 1;
-      const isHabitComplete = updatedProgress >= latestHabit.frequency;
-  
-      // Prepare updated habit details
+      const updatedProgress = (habitDetails.progress || 0) + 1;
+      const isHabitComplete = updatedProgress >= habitDetails.frequency;
+
       const updatedHabit = {
-        ...latestHabit,
+        ...habitDetails,
         progress: updatedProgress,
-        status: updatedProgress >= latestHabit.frequency ? 'full' : 'hungry',
-        lastCompleted: new Date().toISOString(), // Save in ISO format for backend
+        status: isHabitComplete ? 'full' : 'hungry',
+        lastCompleted: new Date().toISOString(),
       };
-  
+
       // Save the updated data to the backend
       const response = await apiClient(`/habits/${habitId}`, {
         method: 'PUT',
@@ -41,47 +54,24 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
         },
         data: updatedHabit,
       });
-  
-      // Update the local state with the response data
-      Object.assign(fish, response.data); // Update the fish object with the latest data
-  
-      // Mark as completed today
+
+      // Update local state with the response data
+      setHabitDetails(response.data);
       const today = new Date().toLocaleDateString('en-US');
-      const lastCompletedDate = new Date(updatedHabit.lastCompleted).toLocaleDateString('en-US');
+      const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
       setCompletedToday(today === lastCompletedDate);
-  
+
       alert(
         isHabitComplete
           ? 'Habit completed! Great job!'
           : `Fish fed! Progress: ${Math.min(
-              (updatedProgress / latestHabit.frequency) * 100,
+              (updatedProgress / habitDetails.frequency) * 100,
               100
             ).toFixed(0)}%`
       );
     } catch (err) {
       console.error('Error feeding fish:', err);
       alert('Failed to feed fish. Please try again.');
-    }
-  };
-
-  const refetchHabitDetails = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await apiClient(`/habits/${habitId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      Object.assign(fish, response.data); // Update the fish object with the latest data
-  
-      // Check if the habit was completed today
-      const today = new Date().toLocaleDateString('en-US');
-      const lastCompletedDate = new Date(fish.lastCompleted).toLocaleDateString('en-US');
-      setCompletedToday(today === lastCompletedDate);
-    } catch (err) {
-      console.error('Error refetching habit details:', err);
     }
   };
 
@@ -96,7 +86,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
   if (showStats) {
     return (
       <FishStatsPanel
-        fish={fish}
+        fish={habitDetails}
         habitId={habitId}
         onClose={onClose}
         onBack={handleCloseStats}
@@ -113,33 +103,33 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
         <h2 className="check-fish-title">check fish</h2>
 
         <div className="fish-detail-content">
-          <h3 className="fish-detail-name">{fish.name}</h3>
+          <h3 className="fish-detail-name">{habitDetails.habitName || 'Unnamed Fish'}</h3>
 
           <div className="fish-detail-image-container">
             <img
-              src={fish.image}
-              alt={fish.name}
+              src={fish.image || '/images/fish/default-fish.png'}
+              alt={habitDetails.habitName || 'Unnamed Fish'}
               className="fish-detail-image"
             />
           </div>
 
           <div className="fish-detail-info">
-          <div className="fish-detail-row">
-            <span className="fish-detail-label">status:</span>
-            <span
-              className={`fish-detail-value ${
-                fish.progress >= fish.frequency ? 'full' : 'hungry'
-              }`}
-            >
-              {fish.progress >= fish.frequency ? 'full' : 'hungry'}
-            </span>
-          </div>
+            <div className="fish-detail-row">
+              <span className="fish-detail-label">status:</span>
+              <span
+                className={`fish-detail-value ${
+                  habitDetails.progress >= habitDetails.frequency ? 'full' : 'hungry'
+                }`}
+              >
+                {habitDetails.progress >= habitDetails.frequency ? 'full' : 'hungry'}
+              </span>
+            </div>
 
             <div className="fish-detail-row">
               <span className="fish-detail-label">Last Completed:</span>
               <span className="fish-detail-value">
-                {fish.lastCompleted
-                  ? new Date(fish.lastCompleted).toLocaleDateString('en-US', {
+                {habitDetails.lastCompleted
+                  ? new Date(habitDetails.lastCompleted).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
@@ -151,8 +141,11 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
             <div className="fish-detail-row">
               <span className="fish-detail-label">Progress:</span>
               <span className="fish-detail-value">
-                {fish.progress && fish.frequency
-                  ? `${Math.min((fish.progress / fish.frequency) * 100, 100).toFixed(0)}%`
+                {habitDetails.progress && habitDetails.frequency
+                  ? `${Math.min(
+                      (habitDetails.progress / habitDetails.frequency) * 100,
+                      100
+                    ).toFixed(0)}%`
                   : '0%'}
               </span>
             </div>
@@ -168,7 +161,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
             <button
               className="fish-detail-button feed-button"
               onClick={handleFeedFish}
-              disabled={completedToday || fish.isHungry}
+              disabled={completedToday || habitDetails.progress >= habitDetails.frequency}
             >
               feed fish
             </button>

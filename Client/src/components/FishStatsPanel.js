@@ -109,12 +109,12 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
           {successMessage && <div className="success-message">{successMessage}</div>} {/* Success message */}
           {error && <div className="error-message">{error}</div>} {/* Error message */}
 
-          <h3 className="fish-name">{fish.name || 'Unnamed Fish'}</h3>
+          <h3 className="fish-name">{fish.habitName || 'Unnamed Fish'}</h3>
 
           <div className="fish-image-container">
             <img
-              src={fish.image || '/images/fish/default-fish.png'}
-              alt={fish.name || 'Unnamed Fish'}
+              src={fish.fish.image || '/images/fish/default-fish.png'}
+              alt={fish.habitName || 'Unnamed Fish'}
               className="fish-image"
             />
           </div>
