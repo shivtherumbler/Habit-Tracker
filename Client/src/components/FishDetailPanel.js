@@ -17,22 +17,22 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const latestHabit = habitResponse.data;
-  
+
       // Increment progress
       const updatedProgress = (latestHabit.progress || 0) + 1;
       const isHabitComplete = updatedProgress >= latestHabit.frequency;
-  
+
       // Prepare updated habit details
       const updatedHabit = {
         ...latestHabit,
         progress: updatedProgress,
         isHungry: !isHabitComplete,
-        status: isHabitComplete ? 'complete' : 'full',
+        status: isHabitComplete ? 'complete' : 'in progress',
         lastCompleted: new Date().toISOString(), // Save in ISO format for backend
       };
-  
+
       // Save the updated data to the backend
       const response = await apiClient(`/habits/${habitId}`, {
         method: 'PUT',
@@ -42,13 +42,20 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
         },
         data: updatedHabit,
       });
-  
+
       // Update the local state with the response data
       Object.assign(fish, response.data); // Update the fish object with the latest data
-  
+
+      // Update the UI immediately
+      fish.progress = updatedProgress;
+      fish.status = isHabitComplete ? 'complete' : 'in progress';
+      fish.lastCompleted = updatedHabit.lastCompleted;
+
       // Mark as completed today
-      setCompletedToday(true);
-  
+      const today = new Date().toLocaleDateString('en-US');
+      const lastCompletedDate = new Date(updatedHabit.lastCompleted).toLocaleDateString('en-US');
+      setCompletedToday(today === lastCompletedDate);
+
       alert(
         isHabitComplete
           ? 'Habit completed! Great job!'
@@ -57,8 +64,6 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
               100
             ).toFixed(0)}%`
       );
-  
-      refetchHabitDetails(); // Refetch habit details to ensure the UI is updated
     } catch (err) {
       console.error('Error feeding fish:', err);
       alert('Failed to feed fish. Please try again.');
@@ -74,9 +79,9 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       Object.assign(fish, response.data); // Update the fish object with the latest data
-  
+
       // Check if the habit was completed today
       const today = new Date().toLocaleDateString('en-US');
       const lastCompletedDate = new Date(fish.lastCompleted).toLocaleDateString('en-US');
