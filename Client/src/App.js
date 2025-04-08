@@ -178,6 +178,7 @@ const handleLogout = () => {
 
   const closeTutorial = () => {
     setIsTutorialOpen(false);
+    setIsMenuOpen(true);
   };
 
   const openAbout = () => {
@@ -187,6 +188,7 @@ const handleLogout = () => {
 
   const closeAbout = () => {
     setIsAboutOpen(false);
+    setIsMenuOpen(true);
   };
 
   const openAddFish = () => {
@@ -196,6 +198,7 @@ const handleLogout = () => {
 
   const closeAddFish = () => {
     setIsAddFishOpen(false);
+    setIsMenuOpen(true);
   };
 
   const openSettings = () => {
@@ -210,6 +213,7 @@ const handleLogout = () => {
 
   const closeCheckFish = () => {
     setIsCheckFishOpen(false);
+    setIsMenuOpen(true);
   };
 
   const handleHabitSelect = (habit) => {
@@ -233,6 +237,7 @@ const handleLogout = () => {
 
   const closeHabitDetails = () => {
     setIsHabitDetailsOpen(false);
+    setIsMenuOpen(true);
   };
 
   const handleBackToHabitDetails = () => {
@@ -272,6 +277,7 @@ const handleLogout = () => {
 };
   const closeFishSelection = () => {
     setIsFishSelectionOpen(false);
+    setIsMenuOpen(true);
   };
 
   // Handle fish click to show stats

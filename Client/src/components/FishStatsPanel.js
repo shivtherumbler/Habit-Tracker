@@ -140,10 +140,10 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
                   <span className="detail-label">Frequency:</span>
                   <span className="detail-value">{frequency || 'Not specified'}</span>
                 </div>
-                <div className="detail-row">
+                {/* <div className="detail-row">
                   <span className="detail-label">Notifications:</span>
                   <span className="detail-value">{notifications ? 'On' : 'Off'}</span>
-                </div>
+                </div> */}
                 <div className="detail-row">
                   <span className="detail-label">Goals:</span>
                   <span className="detail-value">{goals || 'No goals set'}</span>
@@ -163,7 +163,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
                     onChange={(e) => setHabitDetails({ ...habitDetails, frequency: e.target.value })}
                   />
                 </div>
-                <div className="form-row">
+                {/* <div className="form-row">
                   <label>Notifications:</label>
                   <select
                     defaultValue={notifications ? 'on' : 'off'}
@@ -172,7 +172,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
                     <option value="on">On</option>
                     <option value="off">Off</option>
                   </select>
-                </div>
+                </div> */}
                 <div className="form-row">
                   <label>Goals:</label>
                   <textarea

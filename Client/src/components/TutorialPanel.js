@@ -9,10 +9,10 @@ function TutorialPanel({ onClose }) {
         <h2 className="tutorial-title">tutorial</h2>
         
         <div className="tutorial-content">
-          <h3 className="welcome-text">welcome to fishly!</h3>
+          <h3 className="welcome-text">Welcome To Fishly!</h3>
           
           <p className="tutorial-paragraph">
-            fishly is a habit tracking app that<br />
+            Fishly is a habit tracking app that<br />
             uses fish to represent the habits that<br />
             you are trying to build.
           </p>

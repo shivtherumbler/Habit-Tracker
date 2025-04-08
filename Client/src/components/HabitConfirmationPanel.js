@@ -13,48 +13,46 @@ function HabitConfirmationPanel({ onClose, onBack, onComplete, habitDetails }) {
   
   const handleAddToAquarium = async () => {
     try {
-        setLoading(true);
-        setError(null);
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('Token not found in localStorage');
-        }
-
-        const habitData = {
-            habitName: habitDetails.habitName || '',
-            frequency: habitDetails.frequency || 0,
-            notifications: habitDetails.notifications || '',
-            goals: habitDetails.goals || '',
-            notes: habitDetails.notes || '',
-            fish: habitDetails.fish || {}, // Ensure fish object is present
-        };
-
-        console.log('Habit data being sent to backend:', habitData);
-
-        const response = await apiClient('/habits', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json', // Ensure correct content type
-            },
-            data: habitData,
-        });
-
-        console.log('Habit added successfully:', response.data);
-
-        // Call the onComplete callback if provided
-        if (onComplete) onComplete(response.data.habit);
+      setLoading(true);
+      setError(null);
+  
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token not found in localStorage');
+      }
+  
+      const habitData = {
+        habitName: habitDetails.habitName || '',
+        frequency: habitDetails.frequency || 0,
+        notifications: habitDetails.notifications || '',
+        goals: habitDetails.goals || '',
+        notes: habitDetails.notes || '',
+        fish: habitDetails.fish || {}, // Ensure fish object is present
+        progress: 0, // Initialize progress to 0
+    };
+  
+      console.log('Habit data being sent to backend:', habitData);
+  
+      const response = await apiClient('/habits', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data: habitData,
+      });
+  
+      console.log('Habit added successfully:', response.data);
+  
+      // Call the onComplete callback if provided
+      if (onComplete) onComplete(response.data.habit);
     } catch (err) {
-        // Log the full error response for debugging
-        console.error('Error adding habit:', err.response?.data || err.message || err);
-
-        // Set a user-friendly error message
-        setError(err.response?.data?.error || 'Failed to add habit. Please try again.');
+      console.error('Error adding habit:', err.response?.data || err.message || err);
+      setError(err.response?.data?.error || 'Failed to add habit. Please try again.');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 return (
     <div className="habit-confirmation-overlay">

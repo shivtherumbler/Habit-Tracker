@@ -10,7 +10,7 @@ function AboutPanel({ onClose }) {
         
         <div className="about-content">
           <p className="about-paragraph">
-            fishly is developed by team Echo in<br />
+            Fishly is developed by team Echo in<br />
             fulfillment of the program<br />
             requirements of the IMM program at<br />
             Sheridan college.

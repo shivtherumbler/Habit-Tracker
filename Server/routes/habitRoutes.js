@@ -56,7 +56,8 @@ router.post('/habits', authenticate, async (req, res) => {
         goals,
         notes,
         fish,
-        completions: [],
+        progress: 0, // Initialize progress to 0
+        completions: [], // Track completion history
     };
 
     try {
@@ -75,18 +76,19 @@ router.post('/habits', authenticate, async (req, res) => {
 // Update a habit
 router.put('/habits/:id', authenticate, async (req, res) => {
     const { id } = req.params;
-    const { habitName, frequency, notifications, goals, notes } = req.body;
+    const { habitName, frequency, progress, lastCompleted, isComplete } = req.body;
 
     try {
         const updatedHabit = {
             habitName,
             frequency,
-            notifications,
-            goals,
-            notes,
+            progress, // Update progress
+            lastCompleted,
+            isComplete,
         };
-        await updateHabit(id, updatedHabit);
-        res.status(200).json({ message: 'Habit updated successfully' });
+
+        await updateHabit(id, updatedHabit); // Update the habit in the database
+        res.status(200).json({ message: 'Habit updated successfully', habit: updatedHabit });
     } catch (error) {
         console.error('Error updating habit:', error);
         res.status(500).json({ error: 'Failed to update habit' });

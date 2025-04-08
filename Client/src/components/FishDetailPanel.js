@@ -1,34 +1,80 @@
 import React, { useState } from 'react';
 import './FishDetailPanel.css';
 import FishStatsPanel from './FishStatsPanel';
+import apiClient from '../apiClient';
 
 function FishDetailPanel({ fish, habitId, onBack, onClose }) {
   const [completedToday, setCompletedToday] = useState(false);
   const [showStats, setShowStats] = useState(false);
 
-  // Handle feed fish button click
-  const handleFeedFish = () => {
-    // In real implementation, this would mark the habit as completed for today
-    // and update the backend
-    setCompletedToday(true);
+  const handleFeedFish = async () => {
+    try {
+        // Increment progress
+        const updatedProgress = (fish.progress || 0) + 1;
+        const isHabitComplete = updatedProgress >= fish.frequency;
 
-    // For demo purposes only - would actually be handled by backend
-    fish.isHungry = false;
-    fish.status = 'full';
-    fish.lastCompleted = new Date().toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+        // Prepare updated habit details
+        const updatedFish = {
+            ...fish,
+            progress: updatedProgress,
+            isHungry: !isHabitComplete,
+            status: isHabitComplete ? 'complete' : 'full',
+            lastCompleted: new Date().toISOString(), // Use ISO format for backend compatibility
+        };
 
-    // Alert for demo purposes
-    alert('Fish fed! Habit marked as completed for today.');
-  };
+        // Save the updated data to the backend
+        const token = localStorage.getItem('token');
+        const response = await apiClient(`/habits/${habitId}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            data: {
+                habitName: fish.habitName, // Ensure habitName is included
+                frequency: fish.frequency, // Ensure frequency is included
+                progress: updatedProgress,
+                lastCompleted: updatedFish.lastCompleted,
+                isComplete: isHabitComplete,
+            },
+        });
 
-  // Handle check stats button click
+        // Update the local state with the response data
+        Object.assign(fish, response.data); // Update the fish object with the latest data
+
+        alert(
+            isHabitComplete
+                ? 'Habit completed! Great job!'
+                : `Fish fed! Progress: ${Math.min(
+                      (updatedProgress / fish.frequency) * 100,
+                      100
+                  ).toFixed(0)}%`
+        );
+
+        refetchHabitDetails(); // Refetch habit details to ensure the UI is updated
+    } catch (err) {
+        console.error('Error feeding fish:', err);
+        alert('Failed to feed fish. Please try again.');
+    }
+};
+
+  const refetchHabitDetails = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await apiClient(`/habits/${habitId}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        Object.assign(fish, response.data); // Update the fish object with the latest data
+    } catch (err) {
+        console.error('Error refetching habit details:', err);
+    }
+};
+
   const handleCheckStats = () => {
-    console.log('Fish object:', fish); // Debug log
-    console.log('Habit ID (_id):', fish._id);
     setShowStats(true);
   };
 
@@ -36,12 +82,11 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
     setShowStats(false);
   };
 
-  // Render FishStatsPanel if stats are being viewed
   if (showStats) {
     return (
       <FishStatsPanel
-        fish={fish} // Pass the fish object (including image)
-        habitId={habitId} // Pass the habit ID
+        fish={fish}
+        habitId={habitId}
         onClose={onClose}
         onBack={handleCloseStats}
       />
@@ -84,12 +129,15 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
               <span className="fish-detail-value">{fish.lastCompleted}</span>
             </div>
 
-            {fish.goals && (
-              <div className="fish-detail-row">
-                <span className="fish-detail-label">goals:</span>
-                <span className="fish-detail-value">{fish.goals}</span>
-              </div>
-            )}
+            <div className="fish-detail-row">
+              <span className="fish-detail-label">Progress:</span>
+              <span className="fish-detail-value">
+                {Math.min((fish.progress / fish.frequency) * 100, 100).toFixed(
+                  0
+                )}
+                %
+              </span>
+            </div>
 
             {completedToday && (
               <div className="completion-message">
@@ -102,7 +150,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
             <button
               className="fish-detail-button feed-button"
               onClick={handleFeedFish}
-              disabled={completedToday || !fish.isHungry}
+              disabled={completedToday || fish.isHungry}
             >
               feed fish
             </button>
