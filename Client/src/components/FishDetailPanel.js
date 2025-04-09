@@ -133,7 +133,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
   }
 
   // Ensure fish and habitDetails are defined before rendering
-  const fishImage = fish?.image || '/images/fish/default-fish.png';
+  const fishImage = habitDetails?.fish.image || '/images/fish/default-fish.png';
   const fishName = habitDetails?.habitName || 'Unnamed Fish';
 
   return (

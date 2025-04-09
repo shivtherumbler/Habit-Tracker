@@ -167,6 +167,7 @@ const handleLogout = () => {
     setIsFishSelectionOpen(false);
     setIsSettingsOpen(false);
     setIsCheckFishOpen(false);
+    
   };
 
   const closeMenu = () => {
@@ -308,16 +309,6 @@ const handleLogout = () => {
     setIsMenuOpen(true); // Open the menu
   };
 
-  const handleReloadFishDetailPanel = (updatedFish) => {
-    // Temporarily close the panel
-    setSelectedFish(null);
-  
-    // Reopen the panel after a short delay
-    setTimeout(() => {
-      setSelectedFish(updatedFish); // Reopen the panel with updated data
-    }, 100); // Add a slight delay for smooth transition
-  };
-
   return (
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
@@ -404,40 +395,37 @@ const handleLogout = () => {
                 habitDetails={habitDetails}
             />
             )}
-           {selectedFish && (
-           <FishDetailPanel
-           fish={selectedFish}
-           habitId={selectedFish._id}
-           onClose={() => {
-             setSelectedFish(null);
-             //fetchHabits(); // Update habits when closing the panel
-             setIsCheckFishOpen(true); // Open the menu
-           }}
-           onBack={() => {
-             setSelectedFish(null);
-            // fetchHabits(); // Update habits when navigating back
-             setIsCheckFishOpen(true); // Open the menu
-           }}
-           onReload={fetchHabits} // Pass the fetchHabits function as onReload
-           onShowStats={() => setShowStats(true)} // Toggle to FishStatsPanel
-         />
+          {selectedFish && !showStats && (
+            <FishDetailPanel
+              fish={selectedFish}
+              habitId={selectedFish._id}
+              image={selectedFish.fish?.image || '/images/fish/default-fish.png'}
+              onClose={() => {
+                setSelectedFish(null);
+                setIsCheckFishOpen(true); // Open the menu
+              }}
+              onBack={() => {
+                setSelectedFish(null);
+                setIsCheckFishOpen(true); // Open the menu
+              }}
+              onReload={fetchHabits} // Pass the fetchHabits function as onReload
+              onShowStats={() => setShowStats(true)} // Toggle to FishStatsPanel
+            />
           )}
 
-          {selectedFish && (
-          <FishStatsPanel
-          fish={selectedFish}
-          habitId={selectedFish._id}
-          onClose={() => {
-            setSelectedFish(null);
-            //fetchHabits(); // Update habits when closing the panel
-            setIsCheckFishOpen(true); // Open the menu
-          }}
-          onBack={() => {
-            setShowStats(false); // Navigate back to FishDetailPanel
-            //fetchHabits(); // Update habits when navigating back
-          }}
-          onReload={fetchHabits} // Pass the fetchHabits function as onReload
-        />
+          {selectedFish && showStats && (
+            <FishStatsPanel
+              fish={selectedFish}
+              habitId={selectedFish._id}
+              onClose={() => {
+                setSelectedFish(null);
+                setIsCheckFishOpen(true); // Open the menu
+              }}
+              onBack={() => {
+                setShowStats(false); // Navigate back to FishDetailPanel
+              }}
+              onReload={fetchHabits} // Pass the fetchHabits function as onReload
+            />
           )}
           </>
         )}

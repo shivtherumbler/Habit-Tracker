@@ -16,11 +16,11 @@
 .menu-grid-container {
   position: relative;
   background: #ffffff;
-  padding: 40px;
+  padding: 30px;
   border-radius: 20px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,9 +64,8 @@
   background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient background */
   color: white;
   border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  font-size: 16px; /* Adjust font size for labels */
+  width: 100px;
+  height: 100px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -75,16 +74,16 @@
 .menu-grid-item:nth-child(1) {
   top: 0;
   left: 50%;
-  --translate-x: -45%;
-  --translate-y: -60%;
+  --translate-x: -50%;
+  --translate-y: -40%;
   transform: translate(var(--translate-x), var(--translate-y));
 }
 
 .menu-grid-item:nth-child(2) {
   top: 40%;
   right: 0;
-  --translate-x: 50%;
-  --translate-y: -45%;
+  --translate-x: 30%;
+  --translate-y: -40%;
   transform: translate(var(--translate-x), var(--translate-y));
 }
 
@@ -92,7 +91,7 @@
   bottom: 0;
   left: 65%;
   --translate-x: -20%;
-  --translate-y: 60%;
+  --translate-y: 40%;
   transform: translate(var(--translate-x), var(--translate-y));
 }
 
@@ -100,15 +99,15 @@
   bottom: 0;
   left: 35%;
   --translate-x: -80%;
-  --translate-y: 60%;
+  --translate-y: 40%;
   transform: translate(var(--translate-x), var(--translate-y));
 }
 
 .menu-grid-item:nth-child(5) {
   top: 40%;
   left: 0;
-  --translate-x: -40%;
-  --translate-y: -45%;
+  --translate-x: -30%;
+  --translate-y: -40%;
   transform: translate(var(--translate-x), var(--translate-y));
 }
 
@@ -131,19 +130,19 @@
 
 /* Label for menu items */
 .menu-label {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   text-align: center;
   text-transform: capitalize;
 }
 
 .menu-icon-placeholder {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .menu-icon {
