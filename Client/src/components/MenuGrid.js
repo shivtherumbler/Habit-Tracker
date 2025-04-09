@@ -1,15 +1,22 @@
 import React from 'react';
 import './MenuGrid.css';
 
+// Import icons
+import checkFishIcon from '../images/icons/check-fish.png';
+import addFishIcon from '../images/icons/add-fish.png';
+import tutorialIcon from '../images/icons/tutorial.png';
+import aboutIcon from '../images/icons/about.png';
+import settingsIcon from '../images/icons/settings.png';
+
 function MenuGrid({ isOpen, onClose, onTutorialClick, onAboutClick, onAddFishClick, onSettingsClick, onCheckFishClick }) {
   if (!isOpen) return null;
 
   const menuItems = [
-    { id: 1, label: 'check fish' },
-    { id: 2, label: 'add fish' },
-    { id: 3, label: 'tutorial' },
-    { id: 4, label: 'about' },
-    { id: 5, label: 'settings' }
+    { id: 1, label: 'check fish', icon: checkFishIcon },
+    { id: 2, label: 'add fish', icon: addFishIcon },
+    { id: 3, label: 'tutorial', icon: tutorialIcon },
+    { id: 4, label: 'about', icon: aboutIcon },
+    { id: 5, label: 'settings', icon: settingsIcon }
   ];
 
   const handleMenuItemClick = (item) => {
@@ -25,7 +32,6 @@ function MenuGrid({ isOpen, onClose, onTutorialClick, onAboutClick, onAddFishCli
     } else if (item.label === 'check fish') {
       onCheckFishClick();
     }
-    // Future functionality for other menu items will be added here
   };
 
   const handleOverlayClick = (e) => {
@@ -46,7 +52,9 @@ function MenuGrid({ isOpen, onClose, onTutorialClick, onAboutClick, onAddFishCli
               className="menu-grid-item"
               onClick={() => handleMenuItemClick(item)}
             >
-              <div className="menu-icon-placeholder"></div>
+              <div className="menu-icon-placeholder">
+                <img src={item.icon} alt={item.label} className="menu-icon" />
+              </div>
               <div className="menu-label">{item.label}</div>
             </div>
           ))}
@@ -56,4 +64,4 @@ function MenuGrid({ isOpen, onClose, onTutorialClick, onAboutClick, onAddFishCli
   );
 }
 
-export default MenuGrid; 
+export default MenuGrid;
