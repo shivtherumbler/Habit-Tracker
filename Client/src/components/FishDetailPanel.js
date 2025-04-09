@@ -55,10 +55,14 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
         data: updatedHabit,
       });
   
-      // Trigger the reload logic in the parent component
-      if (onReload) {
-        onReload(response.data); // Pass the updated habit details to the parent
-      }
+      // Update the local state with the latest data
+      setHabitDetails(response.data || {});
+      const today = new Date().toLocaleDateString('en-US');
+      const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
+      setCompletedToday(today === lastCompletedDate);
+  
+      // Open the FishStatsPanel with updated data
+      setShowStats(true);
     } catch (err) {
       console.error('Error feeding fish:', err);
       alert('Failed to feed fish. Please try again.');
@@ -86,7 +90,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
 
   // Ensure fish and habitDetails are defined before rendering
   const fishImage = fish?.image || '/images/fish/default-fish.png';
-  const fishName = habitDetails.habitName || 'Unnamed Fish';
+  const fishName = habitDetails?.habitName || 'Unnamed Fish';
 
   return (
     <div className="check-fish-overlay">
@@ -169,9 +173,17 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
           </div>
 
           <div className="button-container">
-            <button className="back-button" onClick={onBack}>
-              &lt; back
-            </button>
+          <button
+            className="back-button"
+            onClick={() => {
+              onBack();
+              if (onReload) {
+                onReload(); // Call the onReload function to fetch updated data
+              }
+            }}
+          >
+            &lt; back
+          </button>
           </div>
         </div>
       </div>

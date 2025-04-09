@@ -3,7 +3,7 @@ import apiClient from '../apiClient'; // Axios client setup
 
 import './FishStatsPanel.css';
 
-function FishStatsPanel({ fish, habitId, onClose, onBack }) {
+function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
   const [habitDetails, setHabitDetails] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -97,7 +97,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
     }
   };
 
-  const { habitName, frequency, notifications, goals, lastCompleted } = habitDetails;
+  const { habitName, frequency, notifications, goals, lastCompleted, progress,  } = habitDetails;
 
   return (
     <div className="fish-stats-overlay">
@@ -109,11 +109,11 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
           {successMessage && <div className="success-message">{successMessage}</div>} {/* Success message */}
           {error && <div className="error-message">{error}</div>} {/* Error message */}
 
-          <h3 className="fish-name">{fish.habitName || 'Unnamed Fish'}</h3>
+          <h3 className="fish-name">{habitDetails.fish.name  || 'Unnamed Fish'}</h3>
 
           <div className="fish-image-container">
             <img
-              src={fish.fish.image || '/images/fish/default-fish.png'}
+              src={habitDetails.fish.image || '/images/fish/default-fish.png'}
               alt={fish.habitName || 'Unnamed Fish'}
               className="fish-image"
             />
@@ -122,7 +122,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
           <div className="stats-row">
             <div className="stat-item">
               <div className="stat-label">Times Completed</div>
-              <div className="stat-value">{fish.timesCompleted || '0'}</div>
+              <div className="stat-value">{progress || '0'}</div>
             </div>
           </div>
 
@@ -197,8 +197,16 @@ function FishStatsPanel({ fish, habitId, onClose, onBack }) {
             <button className="remove-fish-button" onClick={handleRemoveFish}>
               Remove Fish
             </button>
-            <button className="back-button" onClick={onBack}>
-              &lt; Back
+            <button
+              className="back-button"
+              onClick={() => {
+                onBack();
+                if (onReload) {
+                  onReload(); // Call the onReload function to fetch updated data
+                }
+              }}
+            >
+              &lt; back
             </button>
           </div>
         </div>

@@ -10,6 +10,7 @@ import FishSelectionPanel from './components/FishSelectionPanel';
 import SettingsPanel from './components/SettingsPanel';
 import CheckFishPanel from './components/CheckFishPanel';
 import FishDetailPanel from './components/FishDetailPanel';
+import FishStatsPanel from './components/FishStatsPanel';
 import AuthPanel from './components/AuthPanel';
 import aquariumBg from './images/aquarium-bg.jpeg';
 import apiClient from './apiClient';
@@ -214,6 +215,7 @@ const handleLogout = () => {
   const closeCheckFish = () => {
     setIsCheckFishOpen(false);
     setIsMenuOpen(true);
+    fetchHabits(); // Fetch habits on page reload
   };
 
   const handleHabitSelect = (habit) => {
@@ -226,6 +228,7 @@ const handleLogout = () => {
   const handleBackToAddFish = () => {
     setIsHabitDetailsOpen(false);
     setIsAddFishOpen(true);
+    fetchHabits(); // Fetch habits on page reload
   };
 
   const handleHabitDetailsNext = (details) => {
@@ -238,11 +241,13 @@ const handleLogout = () => {
   const closeHabitDetails = () => {
     setIsHabitDetailsOpen(false);
     setIsMenuOpen(true);
+    fetchHabits(); // Fetch habits on page reload
   };
 
   const handleBackToHabitDetails = () => {
     setIsFishSelectionOpen(false);
     setIsHabitDetailsOpen(true);
+    fetchHabits(); // Fetch habits on page reload
   };
 
   const handleHabitComplete = async (completeHabit) => {
@@ -278,6 +283,7 @@ const handleLogout = () => {
   const closeFishSelection = () => {
     setIsFishSelectionOpen(false);
     setIsMenuOpen(true);
+    fetchHabits(); // Fetch habits on page reload
   };
 
   // Handle fish click to show stats
@@ -288,6 +294,7 @@ const handleLogout = () => {
   // Close the FishDetailPanel
   const handleCloseStats = () => {
     setSelectedFish(null);
+    fetchHabits(); // Fetch habits on page reload
   };
 
   const handleReloadFishDetailPanel = (updatedFish) => {
@@ -386,14 +393,25 @@ const handleLogout = () => {
                 habitDetails={habitDetails}
             />
             )}
-             {selectedFish && (
-        <FishDetailPanel
-          fish={selectedFish}
-          habitId={selectedFish._id}
-          onClose={() => setSelectedFish(null)} // Close the panel
-          onReload={() => handleReloadFishDetailPanel(selectedFish)} // Reload the panel
-        />
-      )}
+           {selectedFish && (
+            <FishDetailPanel
+              fish={selectedFish}
+              habitId={selectedFish._id}
+              onClose={() => setSelectedFish(null)}
+              onBack={handleCloseStats}
+              onReload={fetchHabits} // Pass the fetchHabits function as onReload
+            />
+          )}
+
+          {selectedFish && (
+            <FishStatsPanel
+              fish={selectedFish}
+              habitId={selectedFish._id}
+              onClose={() => setSelectedFish(null)}
+              onBack={handleCloseStats}
+              onReload={fetchHabits} // Pass the fetchHabits function as onReload
+            />
+          )}
           </>
         )}
       </div>
