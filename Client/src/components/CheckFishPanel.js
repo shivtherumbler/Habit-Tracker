@@ -134,7 +134,7 @@ function CheckFishPanel({ onClose, onAddFishClick }) {
         <button className="close-button" onClick={onClose}>
           ✕
         </button>
-        <h2 className="check-fish-title">check fish</h2>
+        <h2 className="check-fish-title">Check Fish</h2>
 
         <div className="check-fish-content">
           {loading ? (

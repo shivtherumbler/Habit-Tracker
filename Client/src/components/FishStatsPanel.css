@@ -284,3 +284,10 @@
     flex: 0 0 90px;
   }
 } 
+
+.fish-stats-content p {
+  font-size: 1.2rem;
+  color: #1a3e6c;
+  text-align: center;
+  margin-top: 20px;
+}

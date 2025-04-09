@@ -159,3 +159,22 @@
   text-align: center;
   font-weight: bold;
 }
+
+.remove-button {
+  background-color: #fe0048;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease;
+}
+
+.fish-detail-content p {
+  font-size: 1.2rem;
+  color: #1a3e6c;
+  text-align: center;
+  margin-top: 20px;
+}

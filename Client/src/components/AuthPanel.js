@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './AuthPanel.css';
+import fishlyIcon from '../images/Fishly.png'; // Import the fishly.png image
+
 
 function AuthPanel({ onLogin }) {
   const [isSignup, setIsSignup] = useState(false); // Toggle between login and signup
@@ -33,6 +35,9 @@ function AuthPanel({ onLogin }) {
 
   return (
     <div className="auth-panel">
+       <div className="auth-icon-container">
+        <img src={fishlyIcon} alt="Fishly Icon" className="auth-icon" />
+      </div>
       <h2>{isSignup ? 'Sign Up' : 'Log In'}</h2>
       <input
         type="text"

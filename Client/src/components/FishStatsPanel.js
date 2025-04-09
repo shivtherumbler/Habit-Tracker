@@ -44,8 +44,40 @@ function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
     fetchHabitDetails();
   }, [habitId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div className="error-message">{error}</div>;
+  if (loading) {
+    return (
+      <div className="fish-stats-overlay">
+        <div className="fish-stats-container">
+          <button className="close-button" onClick={onClose}>
+            ✕
+          </button>
+          <h2 className="fish-stats-title">Fish Stats</h2>
+          <div className="fish-stats-content">
+            <p>Loading stats...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fish-stats-overlay">
+        <div className="fish-stats-container">
+          <button className="close-button" onClick={onClose}>
+            ✕
+          </button>
+          <h2 className="fish-stats-title">Fish Stats</h2>
+          <div className="fish-stats-content">
+            <p className="error-message">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -199,14 +231,17 @@ function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
             <button className="remove-fish-button" onClick={handleRemoveFish}>
               Remove Fish
             </button>
-            <button
+            {/* <button
               className="back-button"
               onClick={() => {
-                onClose(); // Call the updated onBack logic from the parent
+                if (onReload) {
+                  onReload(); // Call the onReload function to fetch updated data
+                }
+                onBack(); // Navigate back to the previous screen
               }}
             >
               &lt; back
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

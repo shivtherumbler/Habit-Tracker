@@ -58,7 +58,7 @@ return (
     <div className="habit-confirmation-overlay">
       <div className="habit-confirmation-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="habit-confirmation-title">add fish</h2>
+        <h2 className="habit-confirmation-title">Finalise Fish</h2>
 
         <div className="habit-confirmation-content">
           <h3 className="habit-confirmation-heading">Adding this fish to your aquarium!</h3>
@@ -102,7 +102,7 @@ return (
               onClick={handleAddToAquarium}
               disabled={loading}
             >
-              add this fish to aquarium! &gt;
+              Add this Fish to Aquarium! &gt;
             </button>
           </div>
         </div>

@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import './HabitDetailsPanel.css';
 import NavigationButtons from './NavigationButtons';
 
+// Import icons
+import exerciseIcon from '../images/icons/exercise.png';
+import readIcon from '../images/icons/read.png';
+import studyIcon from '../images/icons/study.png';
+import meditateIcon from '../images/icons/meditate.png';
+import instrumentIcon from '../images/icons/instrument.png';
+import medsIcon from '../images/icons/meds.png';
+import waterIcon from '../images/icons/water.png';
+import journalIcon from '../images/icons/journal.png';
+import cleanIcon from '../images/icons/clean.png';
+
 function HabitDetailsPanel({ onClose, onBack, onNext, selectedHabit }) {
   const [frequency, setFrequency] = useState(3);
   const [notificationTime, setNotificationTime] = useState('');
@@ -46,15 +57,37 @@ function HabitDetailsPanel({ onClose, onBack, onNext, selectedHabit }) {
     if (onNext) onNext(habitDetails);
   };
 
+   // Map the habit label to the corresponding icon
+   const habitIcons = {
+    Exercise: exerciseIcon,
+    Read: readIcon,
+    Study: studyIcon,
+    Meditate: meditateIcon,
+    'Practice Instrument': instrumentIcon,
+    'Take Meds': medsIcon,
+    'Drink Water': waterIcon,
+    Journal: journalIcon,
+    Clean: cleanIcon,
+  };
+
+  const habitIcon = habitIcons[selectedHabit.label];
+
   return (
     <div className="habit-details-overlay">
       <div className="habit-details-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="habit-details-title">add fish</h2>
+        <h2 className="habit-details-title">Add Fish</h2>
 
         <div className="habit-details-content">
           <div className="form-content">
             <h3 className="habit-name">{selectedHabit.label}</h3>
+
+             {/* Display the icon below the label */}
+             {habitIcon && (
+              <div className="habit-icon-container">
+                <img src={habitIcon} alt={selectedHabit.label} className="habit-icon" />
+              </div>
+            )}
 
             <div className="form-group">
               <label htmlFor="frequency">frequency</label>

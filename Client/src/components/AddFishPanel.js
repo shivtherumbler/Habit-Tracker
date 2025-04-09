@@ -1,17 +1,28 @@
 import React from 'react';
 import './AddFishPanel.css';
 
+// Import icons
+import exerciseIcon from '../images/icons/exercise.png';
+import readIcon from '../images/icons/read.png';
+import studyIcon from '../images/icons/study.png';
+import meditateIcon from '../images/icons/meditate.png';
+import instrumentIcon from '../images/icons/instrument.png';
+import medsIcon from '../images/icons/meds.png';
+import waterIcon from '../images/icons/water.png';
+import journalIcon from '../images/icons/journal.png';
+import cleanIcon from '../images/icons/clean.png';
+
 function AddFishPanel({ onClose, onHabitSelect }) {
   const habitOptions = [
-    { id: 1, label: 'exercise' },
-    { id: 2, label: 'read' },
-    { id: 3, label: 'study' },
-    { id: 4, label: 'meditate' },
-    { id: 5, label: 'practice instrument' },
-    { id: 6, label: 'take meds' },
-    { id: 7, label: 'learn language' },
-    { id: 8, label: 'journal' },
-    { id: 9, label: 'clean' }
+    { id: 1, label: 'Exercise', icon: exerciseIcon },
+    { id: 2, label: 'Read', icon: readIcon },
+    { id: 3, label: 'Study', icon: studyIcon },
+    { id: 4, label: 'Meditate', icon: meditateIcon },
+    { id: 5, label: 'Practice Instrument', icon: instrumentIcon },
+    { id: 6, label: 'Take Meds', icon: medsIcon },
+    { id: 7, label: 'Drink Water', icon: waterIcon },
+    { id: 8, label: 'Journal', icon: journalIcon },
+    { id: 9, label: 'Clean', icon: cleanIcon }
   ];
 
   const handleHabitClick = (habit) => {
@@ -25,7 +36,7 @@ function AddFishPanel({ onClose, onHabitSelect }) {
     <div className="add-fish-overlay">
       <div className="add-fish-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="add-fish-title">add fish</h2>
+        <h2 className="add-fish-title">Add Habit</h2>
         
         <div className="add-fish-content">
           <h3 className="add-fish-instruction">Pick a habit that you want to track!</h3>
@@ -37,7 +48,9 @@ function AddFishPanel({ onClose, onHabitSelect }) {
                 className="habit-item"
                 onClick={() => handleHabitClick(habit)}
               >
-                <div className="habit-icon-placeholder"></div>
+                <div className="habit-icon-placeholder">
+                  <img src={habit.icon} alt={habit.label} className="habit-icon" />
+                </div>
                 <span className="habit-label">{habit.label}</span>
               </div>
             ))}
@@ -48,4 +61,4 @@ function AddFishPanel({ onClose, onHabitSelect }) {
   );
 }
 
-export default AddFishPanel; 
+export default AddFishPanel;

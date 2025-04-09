@@ -7,11 +7,14 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
   const [completedToday, setCompletedToday] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [habitDetails, setHabitDetails] = useState(fish || {}); // Ensure habitDetails is initialized
+  const [successMessage, setSuccessMessage] = useState(null); // State for success messages
+  const [loading, setLoading] = useState(true); // State for loading
 
   // Fetch the latest habit details when the panel is opened
   useEffect(() => {
     const fetchHabitDetails = async () => {
       try {
+        setLoading(true); // Set loading to true before fetching data
         const token = localStorage.getItem('token');
         const response = await apiClient(`/habits/${habitId}`, {
           method: 'GET',
@@ -26,6 +29,8 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
         setCompletedToday(today === lastCompletedDate);
       } catch (err) {
         console.error('Error fetching habit details:', err);
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
       }
     };
 
@@ -37,14 +42,14 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
       const token = localStorage.getItem('token');
       const updatedProgress = (habitDetails.progress || 0) + 1;
       const isHabitComplete = updatedProgress >= habitDetails.frequency;
-  
+
       const updatedHabit = {
         ...habitDetails,
         progress: updatedProgress,
         status: isHabitComplete ? 'full' : 'hungry',
         lastCompleted: new Date().toISOString(),
       };
-  
+
       // Save the updated data to the backend
       const response = await apiClient(`/habits/${habitId}`, {
         method: 'PUT',
@@ -54,13 +59,13 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
         },
         data: updatedHabit,
       });
-  
+
       // Update the local state with the latest data
       setHabitDetails(response.data || {});
       const today = new Date().toLocaleDateString('en-US');
       const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
       setCompletedToday(today === lastCompletedDate);
-  
+
       // Open the FishStatsPanel with updated data
       setShowStats(true);
     } catch (err) {
@@ -77,6 +82,56 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
     setShowStats(false);
   };
 
+  const handleRemoveFish = async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      // Send a DELETE request to remove the fish
+      await apiClient(`/habits/${habitId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSuccessMessage('Fish removed successfully!'); // Set success message
+      setTimeout(() => {
+        setSuccessMessage(null); // Clear success message after 3 seconds
+        onClose(); // Close the panel after deletion
+      }, 2000);
+    } catch (err) {
+      console.error('Error removing fish:', err);
+      alert('Failed to remove fish. Please try again.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="check-fish-overlay">
+        <div className="check-fish-container">
+          <button className="close-button" onClick={onClose}>
+            ✕
+          </button>
+          <h2 className="check-fish-title">Fish Details</h2>
+          <div className="fish-detail-content">
+            <p>Loading fish details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showStats) {
+    return (
+      <FishStatsPanel
+        fish={habitDetails}
+        habitId={habitId}
+        onClose={onClose}
+        onBack={handleCloseStats}
+      />
+    );
+  }
+
   // Ensure fish and habitDetails are defined before rendering
   const fishImage = fish?.image || '/images/fish/default-fish.png';
   const fishName = habitDetails?.habitName || 'Unnamed Fish';
@@ -87,7 +142,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
         <button className="close-button" onClick={onClose}>
           ✕
         </button>
-        <h2 className="check-fish-title">check fish</h2>
+        <h2 className="check-fish-title">Fish Details</h2>
 
         <div className="fish-detail-content">
           <h3 className="fish-detail-name">{fishName}</h3>
@@ -101,6 +156,8 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
           </div>
 
           <div className="fish-detail-info">
+            {successMessage && <div className="success-message">{successMessage}</div>} {/* Success message */}
+
             <div className="fish-detail-row">
               <span className="fish-detail-label">status:</span>
               <span
@@ -159,17 +216,27 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
             >
               check stats
             </button>
+
+            <button
+              className="fish-detail-button remove-button"
+              onClick={handleRemoveFish}
+            >
+              remove fish
+            </button>
           </div>
 
           <div className="button-container">
-          <button
-            className="back-button"
-            onClick={() => {
-              onClose(); // Call the updated onBack logic from the parent
-            }}
-          >
-            &lt; back
-          </button>
+            <button
+              className="back-button"
+              onClick={() => {
+                if (onReload) {
+                  onReload(); // Call the onReload function to fetch updated data
+                }
+                onBack(); // Navigate back to the previous screen
+              }}
+            >
+              &lt; back
+            </button>
           </div>
         </div>
       </div>

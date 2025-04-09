@@ -6,7 +6,7 @@ function AboutPanel({ onClose }) {
     <div className="about-overlay">
       <div className="about-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="about-title">about</h2>
+        <h2 className="about-title">About</h2>
         
         <div className="about-content">
           <p className="about-paragraph">

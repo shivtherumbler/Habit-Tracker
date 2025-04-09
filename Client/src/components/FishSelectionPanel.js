@@ -65,7 +65,7 @@ function FishSelectionPanel({ onClose, onBack, onComplete, habitDetails }) {
     <div className="fish-selection-overlay">
       <div className="fish-selection-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="fish-selection-title">add fish</h2>
+        <h2 className="fish-selection-title">Choose Fish</h2>
         
         <div className="fish-selection-content">
           <h3 className="fish-selection-instruction">Pick a fish to represent your habit!</h3>

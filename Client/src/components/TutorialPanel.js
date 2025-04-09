@@ -6,7 +6,7 @@ function TutorialPanel({ onClose }) {
     <div className="tutorial-overlay">
       <div className="tutorial-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="tutorial-title">tutorial</h2>
+        <h2 className="tutorial-title">Tutorial</h2>
         
         <div className="tutorial-content">
           <h3 className="welcome-text">Welcome To Fishly!</h3>

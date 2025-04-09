@@ -170,3 +170,18 @@
     font-size: 0.7rem;
   }
 } 
+
+.habit-icon-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.habit-icon {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}

@@ -17,7 +17,7 @@ function SettingsPanel({ onClose, onLogout, onVolumeChange, onMusicToggle, volum
     <div className="settings-overlay">
       <div className="settings-container">
         <button className="close-button" onClick={onClose}>✕</button>
-        <h2 className="settings-title">settings</h2>
+        <h2 className="settings-title">Settings</h2>
         
         <div className="settings-content">
           <div className="settings-section">
