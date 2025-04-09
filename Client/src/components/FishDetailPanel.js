@@ -3,10 +3,10 @@ import './FishDetailPanel.css';
 import FishStatsPanel from './FishStatsPanel';
 import apiClient from '../apiClient';
 
-function FishDetailPanel({ fish, habitId, onBack, onClose }) {
+function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
   const [completedToday, setCompletedToday] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [habitDetails, setHabitDetails] = useState(fish); // Store habit details locally
+  const [habitDetails, setHabitDetails] = useState(fish || {}); // Ensure habitDetails is initialized
 
   // Fetch the latest habit details when the panel is opened
   useEffect(() => {
@@ -20,7 +20,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
           },
         });
 
-        setHabitDetails(response.data); // Update local habit details
+        setHabitDetails(response.data || {}); // Update local habit details
         const today = new Date().toLocaleDateString('en-US');
         const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
         setCompletedToday(today === lastCompletedDate);
@@ -37,14 +37,14 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
       const token = localStorage.getItem('token');
       const updatedProgress = (habitDetails.progress || 0) + 1;
       const isHabitComplete = updatedProgress >= habitDetails.frequency;
-
+  
       const updatedHabit = {
         ...habitDetails,
         progress: updatedProgress,
         status: isHabitComplete ? 'full' : 'hungry',
         lastCompleted: new Date().toISOString(),
       };
-
+  
       // Save the updated data to the backend
       const response = await apiClient(`/habits/${habitId}`, {
         method: 'PUT',
@@ -54,21 +54,11 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
         },
         data: updatedHabit,
       });
-
-      // Update local state with the response data
-      setHabitDetails(response.data);
-      const today = new Date().toLocaleDateString('en-US');
-      const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
-      setCompletedToday(today === lastCompletedDate);
-
-      alert(
-        isHabitComplete
-          ? 'Habit completed! Great job!'
-          : `Fish fed! Progress: ${Math.min(
-              (updatedProgress / habitDetails.frequency) * 100,
-              100
-            ).toFixed(0)}%`
-      );
+  
+      // Trigger the reload logic in the parent component
+      if (onReload) {
+        onReload(response.data); // Pass the updated habit details to the parent
+      }
     } catch (err) {
       console.error('Error feeding fish:', err);
       alert('Failed to feed fish. Please try again.');
@@ -94,6 +84,10 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
     );
   }
 
+  // Ensure fish and habitDetails are defined before rendering
+  const fishImage = fish?.image || '/images/fish/default-fish.png';
+  const fishName = habitDetails.habitName || 'Unnamed Fish';
+
   return (
     <div className="check-fish-overlay">
       <div className="check-fish-container">
@@ -103,12 +97,12 @@ function FishDetailPanel({ fish, habitId, onBack, onClose }) {
         <h2 className="check-fish-title">check fish</h2>
 
         <div className="fish-detail-content">
-          <h3 className="fish-detail-name">{habitDetails.habitName || 'Unnamed Fish'}</h3>
+          <h3 className="fish-detail-name">{fishName}</h3>
 
           <div className="fish-detail-image-container">
             <img
-              src={fish.image || '/images/fish/default-fish.png'}
-              alt={habitDetails.habitName || 'Unnamed Fish'}
+              src={fishImage}
+              alt={fishName}
               className="fish-detail-image"
             />
           </div>

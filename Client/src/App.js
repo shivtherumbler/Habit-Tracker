@@ -290,6 +290,16 @@ const handleLogout = () => {
     setSelectedFish(null);
   };
 
+  const handleReloadFishDetailPanel = (updatedFish) => {
+    // Temporarily close the panel
+    setSelectedFish(null);
+  
+    // Reopen the panel after a short delay
+    setTimeout(() => {
+      setSelectedFish(updatedFish); // Reopen the panel with updated data
+    }, 100); // Add a slight delay for smooth transition
+  };
+
   return (
     <div className="App">
       <div className="aquarium-container" style={{ backgroundImage: `url(${aquariumBg})` }}>
@@ -376,13 +386,14 @@ const handleLogout = () => {
                 habitDetails={habitDetails}
             />
             )}
-            {selectedFish && (
-              <FishDetailPanel
-                fish={selectedFish.fish}
-                onBack={handleCloseStats}
-                onClose={handleCloseStats}
-              />
-            )}
+             {selectedFish && (
+        <FishDetailPanel
+          fish={selectedFish}
+          habitId={selectedFish._id}
+          onClose={() => setSelectedFish(null)} // Close the panel
+          onReload={() => handleReloadFishDetailPanel(selectedFish)} // Reload the panel
+        />
+      )}
           </>
         )}
       </div>
