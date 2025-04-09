@@ -3,7 +3,7 @@ import './FishDetailPanel.css';
 import FishStatsPanel from './FishStatsPanel';
 import apiClient from '../apiClient';
 
-function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
+function FishDetailPanel({ fish, habitId, onBack, onClose, onReload, onShowStats }) {
   const [completedToday, setCompletedToday] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [habitDetails, setHabitDetails] = useState(fish || {}); // Ensure habitDetails is initialized
@@ -61,8 +61,10 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
       const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
       setCompletedToday(today === lastCompletedDate);
   
-      // Open the FishStatsPanel with updated data
-      setShowStats(true);
+      // Show the FishStatsPanel
+      if (onShowStats) {
+        onShowStats(); // Call the prop to toggle to FishStatsPanel
+      }
     } catch (err) {
       console.error('Error feeding fish:', err);
       alert('Failed to feed fish. Please try again.');

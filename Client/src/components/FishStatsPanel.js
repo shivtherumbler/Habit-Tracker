@@ -120,10 +120,10 @@ function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
           </div>
 
           <div className="stats-row">
-            <div className="stat-item">
-              <div className="stat-label">Times Completed</div>
-              <div className="stat-value">{progress || '0'}</div>
-            </div>
+          <div className="stat-item">
+            <span className="stat-label">Times Completed:</span>
+            <span className="stat-value">{habitDetails?.progress || 0}</span>
+          </div>
           </div>
 
           <div className="habit-details">

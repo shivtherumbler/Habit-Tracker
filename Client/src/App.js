@@ -36,6 +36,7 @@ function App() {
   const audioRef = useRef(null); // Reference to the audio element
   const [musicEnabled, setMusicEnabled] = useState(true); // Track if music is enabled
   const [audioInitialized, setAudioInitialized] = useState(false); // Track if audio is initialized
+  const [showStats, setShowStats] = useState(false); // State to toggle between panels
 
 
   // Handle volume change from SettingsPanel
@@ -393,22 +394,26 @@ const handleLogout = () => {
                 habitDetails={habitDetails}
             />
             )}
-           {selectedFish && (
+           {selectedFish && !showStats && (
             <FishDetailPanel
               fish={selectedFish}
               habitId={selectedFish._id}
               onClose={() => setSelectedFish(null)}
               onBack={handleCloseStats}
               onReload={fetchHabits} // Pass the fetchHabits function as onReload
+              onShowStats={() => setShowStats(true)} // Add a prop to toggle to FishStatsPanel
             />
           )}
 
-          {selectedFish && (
+          {selectedFish && showStats && (
             <FishStatsPanel
               fish={selectedFish}
               habitId={selectedFish._id}
-              onClose={() => setSelectedFish(null)}
-              onBack={handleCloseStats}
+              onClose={() => {
+                setShowStats(false); // Go back to FishDetailPanel
+                setSelectedFish(null);
+              }}
+              onBack={() => setShowStats(false)} // Go back to FishDetailPanel
               onReload={fetchHabits} // Pass the fetchHabits function as onReload
             />
           )}
