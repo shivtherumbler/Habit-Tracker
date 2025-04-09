@@ -9,6 +9,8 @@ function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null); // State for success messages
+  const [habits, setHabits] = useState([]); // Store habits fetched from the backend
+  
 
   useEffect(() => {
     const fetchHabitDetails = async () => {
@@ -120,10 +122,10 @@ function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
           </div>
 
           <div className="stats-row">
-          <div className="stat-item">
-            <span className="stat-label">Times Completed:</span>
-            <span className="stat-value">{habitDetails?.progress || 0}</span>
-          </div>
+            <div className="stat-item">
+              <div className="stat-label">Times Completed</div>
+              <div className="stat-value">{progress || '0'}</div>
+            </div>
           </div>
 
           <div className="habit-details">
@@ -200,10 +202,7 @@ function FishStatsPanel({ fish, habitId, onClose, onBack, onReload }) {
             <button
               className="back-button"
               onClick={() => {
-                onBack();
-                if (onReload) {
-                  onReload(); // Call the onReload function to fetch updated data
-                }
+                onClose(); // Call the updated onBack logic from the parent
               }}
             >
               &lt; back

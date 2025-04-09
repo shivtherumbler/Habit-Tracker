@@ -3,7 +3,7 @@ import './FishDetailPanel.css';
 import FishStatsPanel from './FishStatsPanel';
 import apiClient from '../apiClient';
 
-function FishDetailPanel({ fish, habitId, onBack, onClose, onReload, onShowStats }) {
+function FishDetailPanel({ fish, habitId, onBack, onClose, onReload }) {
   const [completedToday, setCompletedToday] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [habitDetails, setHabitDetails] = useState(fish || {}); // Ensure habitDetails is initialized
@@ -61,10 +61,8 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload, onShowStats
       const lastCompletedDate = new Date(response.data.lastCompleted).toLocaleDateString('en-US');
       setCompletedToday(today === lastCompletedDate);
   
-      // Show the FishStatsPanel
-      if (onShowStats) {
-        onShowStats(); // Call the prop to toggle to FishStatsPanel
-      }
+      // Open the FishStatsPanel with updated data
+      setShowStats(true);
     } catch (err) {
       console.error('Error feeding fish:', err);
       alert('Failed to feed fish. Please try again.');
@@ -78,17 +76,6 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload, onShowStats
   const handleCloseStats = () => {
     setShowStats(false);
   };
-
-  if (showStats) {
-    return (
-      <FishStatsPanel
-        fish={habitDetails}
-        habitId={habitId}
-        onClose={onClose}
-        onBack={handleCloseStats}
-      />
-    );
-  }
 
   // Ensure fish and habitDetails are defined before rendering
   const fishImage = fish?.image || '/images/fish/default-fish.png';
@@ -178,10 +165,7 @@ function FishDetailPanel({ fish, habitId, onBack, onClose, onReload, onShowStats
           <button
             className="back-button"
             onClick={() => {
-              onBack();
-              if (onReload) {
-                onReload(); // Call the onReload function to fetch updated data
-              }
+              onClose(); // Call the updated onBack logic from the parent
             }}
           >
             &lt; back
